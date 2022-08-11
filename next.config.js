@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['pic.maizuo.com'],
+    domains: ['pic.maizuo.com', 'api.ipfsbrowser.com', 'gateway.pinata.cloud'],
   },
 }
 
