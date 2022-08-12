@@ -125,7 +125,13 @@ const Admin = () => {
           </Grid>
 
           <Grid item xs={12} sm={3}>
-            <Button variant="Search">Search</Button>
+              <Button
+                type="Search"
+                variant="contained"
+                sx={{ mt: 0, mb: 2 }}
+              >
+            Search
+            </Button>
           </Grid>
 
           <Grid item xs={12}>

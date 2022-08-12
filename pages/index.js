@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack';
 import Layout from 'components/layout'
 import { Store } from "utils/Store";
-import { defaultProvider, contractRead } from "utils/const";
+import { defaultProvider, registryContractRead } from "utils/const";
 import SMPTable from 'components/homepage/table-smp';
 import PPTable from 'components/homepage/table-pp';
 
@@ -20,25 +20,25 @@ const Home = () => {
   const [loaded, setLoaded] = useState(false)
 
 
-  useEffect(() => {
-    const init = async () => {
-      const eventDetails = await contractRead.eventDetails()
-      const _eventDate = ethers.utils.parseBytes32String(eventDetails.eventDate)
-      const _eventName = ethers.utils.parseBytes32String(eventDetails.eventName)
-      const _eventTime = ethers.utils.parseBytes32String(eventDetails.eventTime)
-      // console.log(eventDate,eventName, eventTime)
-      setEventDate(_eventDate)
-      setEventName(_eventName)
-      setEventTime(_eventTime)
-      setLoaded(true)
-    }
-    init()
-  }, [])
+  // useEffect(() => {
+  //   const init = async () => {
+  //     const eventDetails = await registryContractRead.eventDetails()
+  //     const _eventDate = ethers.utils.parseBytes32String(eventDetails.eventDate)
+  //     const _eventName = ethers.utils.parseBytes32String(eventDetails.eventName)
+  //     const _eventTime = ethers.utils.parseBytes32String(eventDetails.eventTime)
+  //     // console.log(eventDate,eventName, eventTime)
+  //     setEventDate(_eventDate)
+  //     setEventName(_eventName)
+  //     setEventTime(_eventTime)
+  //     setLoaded(true)
+  //   }
+  //   init()
+  // }, [])
 
   return (
     <Layout title="Alberta">
 
-      {loaded &&
+      {
         <Box
           sx={{
             marginTop: '1rem',
