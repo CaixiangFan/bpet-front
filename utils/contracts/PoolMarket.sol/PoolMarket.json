@@ -1,0 +1,602 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_REGISTRY_CONTRACT_ADDRESS",
+        "type": "address"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_minAllowedPrice",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_maxAllowedPrice",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "bidId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "amount",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "price",
+        "type": "uint16"
+      }
+    ],
+    "name": "BidSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "ail",
+        "type": "uint256"
+      }
+    ],
+    "name": "DemandChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "offerId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "OfferDeleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "offerId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "amount",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "price",
+        "type": "uint16"
+      }
+    ],
+    "name": "OfferSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "hour",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculatePoolPrice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "_ail",
+        "type": "uint16"
+      }
+    ],
+    "name": "calculateSMP",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_assetId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_blockNumber",
+        "type": "uint8"
+      }
+    ],
+    "name": "deleteOffer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "dispatchedOffers",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "supplierAccount",
+        "type": "address"
+      },
+      {
+        "internalType": "uint16",
+        "name": "dispatchedAmount",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dispatchedAt",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "energyBids",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "amount",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "price",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "energyOffers",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "amount",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "price",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint256",
+        "name": "submitMinute",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "supplierAccount",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "isValid",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "hour",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDispatchedOffers",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "supplierAccount",
+            "type": "address"
+          },
+          {
+            "internalType": "uint16",
+            "name": "dispatchedAmount",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dispatchedAt",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPoolMarket.DispatchedOffer[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "hour",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPoolPrice",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRegisteredSupplierAssetId",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "minute",
+        "type": "uint256"
+      }
+    ],
+    "name": "getSMP",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getValidOffers",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "marketState",
+    "outputs": [
+      {
+        "internalType": "enum PoolMarket.MarketState",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxAllowedPrice",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "minAllowedPrice",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "poolPrices",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "registryContractRead",
+    "outputs": [
+      {
+        "internalType": "contract IRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_assetId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_amount",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_price",
+        "type": "uint16"
+      }
+    ],
+    "name": "submitBid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "assetId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "blockNumber",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint16",
+        "name": "amount",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "price",
+        "type": "uint16"
+      }
+    ],
+    "name": "submitOffer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "systemMarginalPrices",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalDemand",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "ail",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastUpdated",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "ail",
+        "type": "uint16"
+      }
+    ],
+    "name": "updateDemand",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "validBids",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "validOffers",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

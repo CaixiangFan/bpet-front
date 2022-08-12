@@ -1,0 +1,447 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "_initialBalance",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_purchaseRatio",
+        "type": "uint16"
+      },
+      {
+        "internalType": "address",
+        "name": "_energyTokenAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "authorizedEntity",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "energyToken",
+    "outputs": [
+      {
+        "internalType": "contract IEnergyToken",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllConsumers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllSuppliers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "consumerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getConsumer",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "assetId",
+            "type": "string"
+          },
+          {
+            "internalType": "uint16",
+            "name": "load",
+            "type": "uint16"
+          },
+          {
+            "internalType": "string",
+            "name": "offerControl",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct IRegistry.Consumer",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "supplierAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getSupplier",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "assetId",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "blockAmount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint16",
+            "name": "capacity",
+            "type": "uint16"
+          },
+          {
+            "internalType": "string",
+            "name": "offerControl",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct IRegistry.Supplier",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalCapacity",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "initialBalance",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isRegisteredConsumer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isRegisteredSupplier",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "purchaseRatio",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "purchaseTokens",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_assetId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_load",
+        "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "_offerControl",
+        "type": "string"
+      }
+    ],
+    "name": "registerConsumer",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_assetId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_blockAmount",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_capacity",
+        "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "_offerControl",
+        "type": "string"
+      }
+    ],
+    "name": "registerSupplier",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "registeredConsumerAccounts",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "registeredConsumers",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "assetId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint16",
+        "name": "load",
+        "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "offerControl",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "registeredSupplierAccounts",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "registeredSuppliers",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "assetId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "blockAmount",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint16",
+        "name": "capacity",
+        "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "offerControl",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalCapacity",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
