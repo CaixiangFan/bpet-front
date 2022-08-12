@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 import Head from 'next/head';
 import TopBar from 'components/topbar';
 import { Store } from "utils/Store";
-import PoolPrice from 'components/poolprice';
+import PoolPrice from 'components/realtime-price';
 
 const Layout = ({title, children}) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
