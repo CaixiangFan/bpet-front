@@ -7,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
-// import htmltojson from 'html-to-json';
 
 function createData( dateHe, price, ravg, ail ) {
   return { dateHe, price, ravg, ail };
@@ -44,13 +43,11 @@ async function getData() {
       'content-type': 'application/json',
     }
   });
-  // const tabledata = await htmltojson.parse(res.data, {
-  //   'text': function ($doc) {
-  //     return $doc.find('TABLE').text();
-  //   }
-  // });
-  console.log('Response: ', res.data);
-  // console.log(tabledata);
+
+  const tabledata = res.data.split('<TABLE BORDER="1" ALIGN="CENTER">')[1];
+  // console.log('Parsed table: ', tabledata); // => <a href="#">Link...
+  // const head = tabledata.match(/\<TH\>(.*?)\<\/TH\>/g)
+  // console.log(head);
   return {
     props: { res }
   }

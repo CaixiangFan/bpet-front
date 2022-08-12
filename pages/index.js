@@ -21,7 +21,6 @@ const Home = () => {
 
 
   useEffect(() => {
-
     const init = async () => {
       const eventDetails = await contractRead.eventDetails()
       const _eventDate = ethers.utils.parseBytes32String(eventDetails.eventDate)
@@ -35,11 +34,6 @@ const Home = () => {
     }
     init()
   }, [])
-
-
-  const onClickHandler = (event) => {
-    router.push('/buy-ticket')
-  }
 
   return (
     <Layout title="Alberta">
@@ -63,16 +57,7 @@ const Home = () => {
         >
           <Paper elevation={1}>
             <Typography variant='h4' alignContent='center' textAlign='center' margin='1.5rem'>Welcome to BPET !</Typography>
-            {/* <Typography variant='h4' alignContent='center' textAlign='center'>{eventName}</Typography>
-            <Typography variant='h6' sx={{ textAlign: 'center', fontSize: '1.2rem', margin: '0.25rem' }}>{eventDate}</Typography>
-            <Typography variant='h6' sx={{ textAlign: 'center', fontSize: '1.2rem;', margin: '0.25rem' }}>{eventTime}</Typography> */}
             <Typography alignContent='center' textAlign='center'>Our blockchain-based peer-to-peer energy trading (BPET) system is a technology inavation for accelerating renewable energy flow in Alberta!</Typography>
-
-            {/* <Box textAlign='center' margin='3rem'>
-              <Button variant="outlined" size="large" onClick={onClickHandler}>
-                Buy a Ticket!
-              </Button>
-            </Box> */}
           </Paper>
         </Box>
       }
