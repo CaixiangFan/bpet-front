@@ -1,22 +1,6 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "uint16",
-        "name": "_initialBalance",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint16",
-        "name": "_purchaseRatio",
-        "type": "uint16"
-      },
-      {
-        "internalType": "address",
-        "name": "_energyTokenAddress",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -53,16 +37,29 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "energyToken",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "contract IEnergyToken",
-        "name": "",
+        "internalType": "address",
+        "name": "_accountToFindAndDelete",
         "type": "address"
       }
     ],
-    "stateMutability": "view",
+    "name": "deleteConsumer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_accountToFindAndDelete",
+        "type": "address"
+      }
+    ],
+    "name": "deleteSupplier",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -104,6 +101,11 @@
       {
         "components": [
           {
+            "internalType": "address",
+            "name": "account",
+            "type": "address"
+          },
+          {
             "internalType": "string",
             "name": "assetId",
             "type": "string"
@@ -139,6 +141,11 @@
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "address",
+            "name": "account",
+            "type": "address"
+          },
           {
             "internalType": "string",
             "name": "assetId",
@@ -182,20 +189,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "initialBalance",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "uint16",
-        "name": "",
-        "type": "uint16"
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "isRegisteredConsumer",
     "outputs": [
       {
@@ -237,26 +237,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "purchaseRatio",
-    "outputs": [
-      {
-        "internalType": "uint16",
-        "name": "",
-        "type": "uint16"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "purchaseTokens",
-    "outputs": [],
-    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -340,6 +320,11 @@
     "name": "registeredConsumers",
     "outputs": [
       {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
         "internalType": "string",
         "name": "assetId",
         "type": "string"
@@ -387,6 +372,11 @@
     ],
     "name": "registeredSuppliers",
     "outputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
       {
         "internalType": "string",
         "name": "assetId",

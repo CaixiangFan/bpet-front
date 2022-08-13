@@ -18,8 +18,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useSnackbar } from 'notistack';
 import { Store } from "utils/Store";
-import { contractAddress, contractRead, defaultNetworkId, defaultProvider, goerliChainConfig } from 'utils/const'
-import abi from 'utils/contracts/abi.json';
+import { REGISTRY_CONTRACT_ADDRESS, registryContractRead, defaultNetworkId, defaultProvider, besuChainConfig } from 'utils/const'
+// import abi from 'utils/contracts/abi.json';
 
 const pages = ['I\'m Admin', 'Register', 'Buy ETK', 'Submit Offer', 'Submit Bid'];
 const pages_link = ['/admin', '/register', '/buy-etk', '/submit-offer', '/submit-bid'];
@@ -57,26 +57,26 @@ const ResponsiveAppBar = () => {
     console.log('STATE RESETTED ...');
   };
 
-  const updateAllTicketInfo = async () => {
-    let size = await contractRead.getTicketCategoryArraySize()
-    size = size.toNumber()
-    if (size === 0) {
-      enqueueSnackbar('Ticket Categories Not Set Yet!', { variant: 'error' })
-      return
-    }
-    let ticketCategories = []
-    for (let i = 0; i < size; i++) {
-      const ticket = await contractRead.ticketCategoryArray(i);
-      const categoryName = ethers.utils.parseBytes32String(ticket.categoryName)
-      const ticketDetails = await contractRead.ticketCategoryMapping(ticket.categoryName)
-      const ticketPrice = ethers.utils.formatEther(ticketDetails.ticketPrice)
-      const maxNoOfTickets = ticketDetails.maxNoOfTickets.toNumber()
-      const numberOfTicketsBought = ticketDetails.numberOfTicketsBought.toNumber()
-      // console.log(categoryName, ticketPrice, maxNoOfTickets, numberOfTicketsBought)
-      ticketCategories.push({ categoryName, ticketPrice, maxNoOfTickets, numberOfTicketsBought })
-    }
-    dispatch({ type: 'UPDATE_TICKET_CATEGORIES', payload: ticketCategories})
-  }
+  // const updateAllTicketInfo = async () => {
+  //   let size = await contractRead.getTicketCategoryArraySize()
+  //   size = size.toNumber()
+  //   if (size === 0) {
+  //     enqueueSnackbar('Ticket Categories Not Set Yet!', { variant: 'error' })
+  //     return
+  //   }
+  //   let ticketCategories = []
+  //   for (let i = 0; i < size; i++) {
+  //     const ticket = await contractRead.ticketCategoryArray(i);
+  //     const categoryName = ethers.utils.parseBytes32String(ticket.categoryName)
+  //     const ticketDetails = await contractRead.ticketCategoryMapping(ticket.categoryName)
+  //     const ticketPrice = ethers.utils.formatEther(ticketDetails.ticketPrice)
+  //     const maxNoOfTickets = ticketDetails.maxNoOfTickets.toNumber()
+  //     const numberOfTicketsBought = ticketDetails.numberOfTicketsBought.toNumber()
+  //     // console.log(categoryName, ticketPrice, maxNoOfTickets, numberOfTicketsBought)
+  //     ticketCategories.push({ categoryName, ticketPrice, maxNoOfTickets, numberOfTicketsBought })
+  //   }
+  //   dispatch({ type: 'UPDATE_TICKET_CATEGORIES', payload: ticketCategories})
+  // }
 
   const updateProvider = async () => {
     const connection = await web3Modal.connect();
@@ -113,7 +113,7 @@ const ResponsiveAppBar = () => {
         // switch network
         window.ethereum.request({
           method: 'wallet_addEthereumChain',
-          params: goerliChainConfig,
+          params: besuChainConfig,
         });
       } else {
         dispatch({ type: 'UPDATE_CORRECT_NETWORK_CONNECTED', payload: true });
@@ -155,8 +155,10 @@ const ResponsiveAppBar = () => {
   useEffect(() => {
     // unlock wallet
     const init = async () => {
-      await updateAllTicketInfo()
-      const _adminAddress = await contractRead.owner()
+      // await updateAllTicketInfo()
+      const _adminAddress = await registryContractRead.owner()
+      // console.log('Registry owner: ', _adminAddress);
+
       dispatch({ type: 'UPDATE_ADMIN_ADDRESS', payload: _adminAddress });
 
       await window.ethereum.request({ method: 'eth_requestAccounts' });

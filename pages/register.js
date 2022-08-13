@@ -42,10 +42,59 @@ const Register = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer, ticketCategories } = state;
-  const [usertype, setUsertype] = React.useState('');
+  const [usertype, setUsertype] = useState('');
+  const [assetId, setAssetId] = useState('');
+  const [capacityOrLoad, setCapacityOrLoad] = useState(0);
+  const [blockAmount, setBlockAmount] = useState(0);
+  const [offerControl, setOfferControl] = useState('');
+  const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
+  const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
 
-  const handleChange = (event) => {
+  useEffect(() => {
+    if (account.length === 0) return
+    const checkRegistered = async () => {
+      const _isRegisteredSupplier = await registryContractRead.isRegisteredSupplier(account);
+      const _isRegisteredConsumer = await registryContractRead.isRegisteredSupplier(account);
+      if (_isRegisteredSupplier) {
+        const registeredSupplier = await registryContractRead.getSupplier(account);
+        setAssetId(registeredSupplier.assetId);
+        setCapacityOrLoad(registeredSupplier.capacity);
+        setUsertype("Supplier");
+        setBlockAmount(registeredSupplier.blockAmount);
+        setOfferControl(registeredSupplier.offerControl);
+      } else if (_isRegisteredConsumer) {
+        const registeredConsumer = await registryContractRead.getConsumer(account);
+        setAssetId(registeredConsumer.assetId);
+        setCapacityOrLoad(registeredConsumer.load);
+        setUsertype("Consumer");
+        setOfferControl(registeredConsumer.offerControl);
+      }
+      setIsRegisteredSupplier(_isRegisteredSupplier);
+      setIsRegisteredConsumer(_isRegisteredConsumer);
+    }
+    checkRegistered()
+  }, [account])
+
+  const handleUsertypeChange = (event) => {
     setUsertype(event.target.value);
+  }
+
+  const inputValidate = (registryData) => {
+    let allValid = true;
+    if (registryData.userType.length === 0) {
+      allValid = false;
+      enqueueSnackbar('You must select suer type', { variant: 'error' })
+    }
+
+    if (registryData.assetID.length === 0) {
+      allValid = false;
+      enqueueSnackbar('You must input AssetID', { variant: 'error' })
+    }
+    if (registryData.capacityOrLoad == 0) {
+      allValid = false;
+      enqueueSnackbar('You must input non-zero capacity or load', { variant: 'error' })
+    }
+    return allValid;
   }
 
   const handleSubmit = (event) => {
@@ -53,29 +102,32 @@ const Register = () => {
     const data = new FormData(event.currentTarget);
     const registryData = {
       userType: usertype,
-      assetID: ethers.utils.formatBytes32String(data.get('assetID')),
+      assetID: data.get('assetID'),
       capacityOrLoad: Number(data.get('capacityOrLoad')),
       blockAmount: Number(data.get('blockAmount')),
-      orderControl: ethers.utils.formatBytes32String(data.get('orderControl'))
+      orderControl: data.get('orderControl')
     };
+    const valid = inputValidate(registryData);
+    if (!valid) return;
 
-    console.log('Registry Info: ', registryData);
-
+    if (!walletConencted || !signer) {
+      enqueueSnackbar("You must login Metamask to continue", { variant: 'info', preventDuplicate: true});
+      return
+    }
+    console.log('Registry Input Data: ', registryData);
     const register = async (usertype, registryData) => {
       // validate signature
-      console.log('Current connected signer address: ', await signer.getAddress());
-
+      enqueueSnackbar(`You are registering ${registryData.assetID}, waiting for confirmation...`, { variant: 'success' })
       await registerUser(usertype, registryData);
-
+      enqueueSnackbar("User registered successfully!", { variant: 'success', preventDuplicate: true});
       if (usertype === 'Supplier') {
-        const registeredSuppliers = await registryContractRead.getSupplier(walletConencted);
-        console.log('Registered supplier: ', registeredSuppliers);
+        const registeredSupplier = await registryContractRead.getSupplier(signer.getAddress());
+        console.log('Registered supplier: ', registeredSupplier);
       } else {
-        const registeredConsumers = await registryContractRead.getConsumer(walletConencted);
-        console.log('Registered consumer: ', registeredConsumers);
+        const registeredConsumer = await registryContractRead.getConsumer(signer.getAddress());
+        console.log('Registered consumer: ', registeredConsumer);
       }
     }
-
     register(usertype, registryData);
   };
 
@@ -127,8 +179,9 @@ const Register = () => {
                     labelId="user-type-select"
                     id="user-type-select"
                     value={usertype}
-                    label="User Type"
-                    onChange={handleChange}
+                    label={(isRegisteredSupplier || isRegisteredConsumer) ? usertype : "User Type"}
+                    onChange={handleUsertypeChange}
+                    disabled={isRegisteredSupplier || isRegisteredConsumer}
                   >          
                     <MenuItem value={'Supplier'}>Supplier</MenuItem>
                     <MenuItem value={'Consumer'}>Consumer</MenuItem>
@@ -143,8 +196,9 @@ const Register = () => {
                   required
                   fullWidth
                   id="assetID"
-                  label="AssetID"
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? assetId : "AssetID"}
                   autoFocus
+                  disabled={isRegisteredSupplier || isRegisteredConsumer}
                 />
               </Grid>
               <Grid item xs={12} sm={12}>
@@ -152,31 +206,34 @@ const Register = () => {
                   required
                   fullWidth
                   id="capacityOrLoad"
-                  label="Capacity or Load"
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? capacityOrLoad : "Capacity or Load"}
                   name="capacityOrLoad"
                   autoComplete="capacityOrLoad"
+                  disabled={isRegisteredSupplier || isRegisteredConsumer}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
                   id="blockAmount"
-                  label="Block Amount (Optional)"
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? blockAmount : "Block Amount (Optional)"}
                   name="blockAmount"
                   autoComplete="blockAmount"
+                  disabled={isRegisteredSupplier || isRegisteredConsumer}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="orderControl"
-                  label="Order Control (Optional)"
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? offerControl : "Order Control (Optional)"}
                   type="orderControl"
                   id="orderControl"
                   autoComplete="orderControl"
+                  disabled={isRegisteredSupplier || isRegisteredConsumer}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} hidden={isRegisteredSupplier || isRegisteredConsumer}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
                   label="I have read and understand the terms and conditions of the agreement to register a user."
@@ -188,8 +245,9 @@ const Register = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isRegisteredSupplier || isRegisteredConsumer}
             >
-              Submit
+              {isRegisteredSupplier || isRegisteredConsumer ? 'Already Registered' : 'Submit'}
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>

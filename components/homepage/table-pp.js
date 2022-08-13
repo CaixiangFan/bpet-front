@@ -54,7 +54,7 @@ async function getData() {
 }
 
 const PPTable = () => {
-  const restable = getData();
+  // const restable = getData();
 
   return ( 
     <TableContainer component={Paper}>

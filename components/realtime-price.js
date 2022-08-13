@@ -2,22 +2,22 @@ import React, { useState, useEffect } from "react";
 import { Typography, Box, Paper, Button, Card } from '@mui/material';
 import axios from 'axios';
 
-async function getData() {
-  const res = await axios.get('http://ets.aeso.ca/ets_web/ip/Market/Reports/CSMPriceReportServlet?contentType=html',{
-    headers: {
-      'Access-Control-Allow-Origin': true,
-      'content-type': 'application/json',
-    }
-  });
-  const rtprice = res.data.match(/Projected Pool Price(.*?)\.\</g)[0];
-  console.log(rtprice);
-  return {
-    props: { rtprice }
-  }
-}
+// async function getData() {
+//   const res = await axios.get('http://ets.aeso.ca/ets_web/ip/Market/Reports/CSMPriceReportServlet?contentType=html',{
+//     headers: {
+//       'Access-Control-Allow-Origin': true,
+//       'content-type': 'application/json',
+//     }
+//   });
+//   const rtprice = res.data.match(/Projected Pool Price(.*?)\.\</g)[0];
+//   console.log(rtprice);
+//   return {
+//     props: { rtprice }
+//   }
+// }
 
 const PoolPrice = () => {
-  const { rtprice } = getData(); 
+  // const { rtprice } = getData(); 
 
   const [time, setTime] = useState(false);
 

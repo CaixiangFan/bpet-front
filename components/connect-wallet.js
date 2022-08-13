@@ -74,7 +74,7 @@ const updateNetwork = async (action) => {
       // switch network
       window.ethereum.request({
         method: 'wallet_addEthereumChain',
-        params: goerliChainConfig,
+        params: besuChainConfig,
       });
     } else {
       dispatch({ type: 'UPDATE_CORRECT_NETWORK_CONNECTED', payload: true });

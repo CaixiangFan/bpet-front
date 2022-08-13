@@ -1,24 +1,38 @@
 import { ethers } from "ethers";
-import abi from 'utils/contracts/abi.json'
+import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
+import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
+import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json';
+import paymentAbi from 'utils/contracts/Payment.sol/Payment.json';
 
 // const backendUrl = 'http://localhost:3000/'
 const backendUrl = 'https://nfticket.herokuapp.com/'
 // RPC URL -- replaced with bsctestnet
-const goerliRpcUrl = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
-const defaultProvider = new ethers.providers.JsonRpcProvider(goerliRpcUrl);
-const defaultNetworkId = 97;
+// const besuRpcUrl = 'http://192.168.226.67:8545';
+// const defaultProvider = new ethers.providers.JsonRpcProvider(besuRpcUrl);
+// const defaultNetworkId = 1337;
 
-const contractAddress = '0xC6A396196d76DbDe3cB77B053886Ee603e274318'
-const contractRead = new ethers.Contract(contractAddress, abi, defaultProvider)
+const besuRpcUrl = 'https://eth-goerli.alchemyapi.io/v2/clmX3XYJBsntbfU05Td00zsij5-rcKqQ';
+const defaultProvider = new ethers.providers.JsonRpcProvider(besuRpcUrl);
+const defaultNetworkId = 5;
 
-const goerliChainConfig = [
+const TOKEN_CONTRACT_ADDRESS = '0x44a723162fDdBf045022dD6458999C7E860e7EF1';
+const REGISTRY_CONTRACT_ADDRESS = '0x2E5Cdd26af7E5d0ABB9CF3721Cf988dFf42B20a4';
+const POOLMARKET_CONTRACT_ADDRESS = '0x09c70DCe1aEbca6cbc5f628DeE19c331fb53B9C6';
+const PAYMENT_CONTRACT_ADDRESS = '0x025301790aDb4fAfa7C79128a2156eA0D1A6c078';
+
+const registryContractRead = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, defaultProvider)
+const tokenContractRead = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, defaultProvider)
+const poolmarketContractRead = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi, defaultProvider)
+const paymentContractRead = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentAbi, defaultProvider)
+
+const besuChainConfig = [
   {
-    chainId: '0x61',
-    rpcUrls: [goerliRpcUrl,],
-    chainName: 'BSCTestnet Testnet',
+    chainId: '0x5',
+    rpcUrls: [besuRpcUrl,],
+    chainName: 'Goerli',
     nativeCurrency: {
-      name: 'tBNB',
-      symbol: 'BNB',
+      name: 'Goerli Ether',
+      symbol: 'GoerliETH',
       decimals: 18,
     },
     blockExplorerUrls: ['https://goerli.etherscan.io/'],
@@ -30,11 +44,17 @@ const ipfsEndpoint = 'https://gateway.pinata.cloud/ipfs/'
 
 export {
   backendUrl,
-  contractAddress,
-  contractRead,
-  goerliRpcUrl,
+  REGISTRY_CONTRACT_ADDRESS,
+  TOKEN_CONTRACT_ADDRESS,
+  POOLMARKET_CONTRACT_ADDRESS,
+  PAYMENT_CONTRACT_ADDRESS,
+  registryContractRead,
+  tokenContractRead,
+  poolmarketContractRead,
+  paymentContractRead,
+  besuRpcUrl,
   defaultProvider,
   defaultNetworkId,
-  goerliChainConfig,
+  besuChainConfig,
   ipfsEndpoint
 }
