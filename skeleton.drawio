@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="N4T2xADhDQuCGSEhYTma" name="Page-1">
-        <mxGraphModel dx="1809" dy="590" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1929" dy="622" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -290,7 +290,7 @@
                 <mxCell id="118" value="Connect Wallet" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="539" y="1610" width="110" height="35" as="geometry"/>
                 </mxCell>
-                <mxCell id="120" value="Buy EKT" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                <mxCell id="120" value="Buy ETK" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="-1" y="1550" width="121" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="122" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -318,7 +318,7 @@
                 <mxCell id="128" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="230.88" y="1810" width="180" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="129" value="&lt;b style=&quot;color: rgb(240 , 240 , 240) ; font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; letter-spacing: normal ; text-align: center ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;Buy EKT:&lt;br&gt;&lt;/b&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="129" value="&lt;b style=&quot;color: rgb(240 , 240 , 240) ; font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; letter-spacing: normal ; text-align: center ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;Buy ETK:&lt;br&gt;&lt;/b&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="157.62" y="1810" width="71.38" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="134" value="Submit" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -390,7 +390,7 @@
                 <mxCell id="154" value="Register" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="1" vertex="1">
                     <mxGeometry x="243.25" y="1610" width="56" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="155" value="Buy EKT" style="text;strokeColor=none;fillColor=#666666;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;rounded=1;" parent="1" vertex="1">
+                <mxCell id="155" value="Buy ETK" style="text;strokeColor=none;fillColor=#666666;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="306.75" y="1610" width="61.5" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="156" value="Submit Offer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="1" vertex="1">
@@ -432,7 +432,7 @@
                 <mxCell id="168" value="&lt;b style=&quot;color: rgb(240 , 240 , 240) ; font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; letter-spacing: normal ; text-align: center ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;Pay ETH:&lt;br&gt;&lt;/b&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="158.37" y="1868" width="72.63" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="169" value="&lt;b style=&quot;color: rgb(240 , 240 , 240) ; font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; letter-spacing: normal ; text-align: center ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;EKT Balance:&lt;br&gt;&lt;/b&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="169" value="&lt;b style=&quot;color: rgb(240 , 240 , 240) ; font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; letter-spacing: normal ; text-align: center ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;ETK Balance:&lt;br&gt;&lt;/b&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="135" y="1760" width="94" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="170" value="&lt;b style=&quot;color: rgb(240 , 240 , 240) ; font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; letter-spacing: normal ; text-align: center ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;105 EKT&lt;br&gt;&lt;/b&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -453,10 +453,10 @@
                 <mxCell id="175" value="&lt;span style=&quot;color: rgb(240, 240, 240); font-family: helvetica; font-size: 12px; font-style: normal; font-weight: 400; letter-spacing: normal; text-align: center; text-indent: 0px; text-transform: none; word-spacing: 0px; background-color: rgb(42, 42, 42); display: inline; float: none;&quot;&gt;Projected Pool Price for Hour Ending {} is {} as of {}&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;fontSize=18;" parent="1" vertex="1">
                     <mxGeometry x="232.5" y="190" width="300" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="176" value="&lt;div style=&quot;text-align: center&quot;&gt;&lt;span&gt;&lt;font face=&quot;helvetica&quot;&gt;&lt;b&gt;Automatically fetch from AESO client side&lt;/b&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="176" value="&lt;div style=&quot;text-align: center&quot;&gt;&lt;span&gt;&lt;font face=&quot;helvetica&quot;&gt;&lt;b&gt;Automatically fetch from AESO client side&lt;/b&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="540" y="160" width="140" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="177" value="" style="edgeStyle=none;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="13">
+                <mxCell id="177" value="" style="edgeStyle=none;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="13" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="520.8800000000001" y="219.5" as="sourcePoint"/>
                         <mxPoint x="580" y="220" as="targetPoint"/>
