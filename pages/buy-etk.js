@@ -1,7 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Layout from 'components/layout';
+import { ethers } from "ethers";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {
+  registryContractRead, 
+  REGISTRY_CONTRACT_ADDRESS,
+  tokenContractRead,
+  TOKEN_CONTRACT_ADDRESS
+} from 'utils/const';
+import { useSnackbar, closeSnackbar } from 'notistack';
+import { Store } from "utils/Store";
 import {
     Avatar,
     Button,
@@ -21,33 +30,52 @@ import {
   } from '@mui/material';
 
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 const BuyETK = () => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { state, dispatch } = useContext(Store);
+  const { walletConencted, correctNetworkConnected, account, provider, signer, ticketCategories } = state;
+  const [usertype, setUsertype] = useState('');
+  const [assetId, setAssetId] = useState('');
+  const [etkBalance, setETKBalance] = useState(0);
+  const [amountType, setAmountType] = useState('buyETKAmount');
+  const [offerControl, setOfferControl] = useState('');
+  const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
+  const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
 
-  const [usertype, setUsertype] = React.useState('');
-
-  const handleChange = (event) => {
-    setUsertype(event.target.value);
+  useEffect(() => {
+    if (account.length === 0) return
+    const checkRegistered = async () => {
+      const _isRegisteredSupplier = await registryContractRead.isRegisteredSupplier(account);
+      const _isRegisteredConsumer = await registryContractRead.isRegisteredSupplier(account);
+      if (_isRegisteredSupplier) {
+        const registeredSupplier = await registryContractRead.getSupplier(account);
+        setAssetId(registeredSupplier.assetId);
+        setUsertype("Supplier");
+      } else if (_isRegisteredConsumer) {
+        const registeredConsumer = await registryContractRead.getConsumer(account);
+        setAssetId(registeredConsumer.assetId);
+        setUsertype("Consumer");
+      } else {
+        enqueueSnackbar('This account has not been registered!', { variant: 'info', preventDuplicate: true });
+      }
+      setIsRegisteredSupplier(_isRegisteredSupplier);
+      setIsRegisteredConsumer(_isRegisteredConsumer);
+      const _etkBalance = await tokenContractRead.balanceOf(account);
+      setETKBalance(ethers.utils.formatEther(_etkBalance));
+    }
+    checkRegistered();
+  }, [account])
+  
+  const handleAmountTypeChange = (event) => {
+    setAmountType(event.target.value);
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      amountType: amountType,
+      amount: data.get('amount'),
     });
   };
 
@@ -70,68 +98,71 @@ const BuyETK = () => {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  fullWidth
+                  id="balance"
+                  label={etkBalance}
+                  name="etkBalance"
+                  autoComplete="etkBalance"
+                  disabled
+                />
+              </Grid>
 
               <Grid item xs={12} sm={12}>
-                <FormControl fullWidth required size='small'>
-                  <InputLabel id="demo-simple-select-label">User Type</InputLabel>
-                  <Select
-                    labelId="user-type-select"
-                    id="user-type-select"
-                    value={usertype}
-                    label="User Type"
-                    onChange={handleChange}
-                  >          
-                    <MenuItem value={10}>Supplier</MenuItem>
-                    <MenuItem value={20}>Consumer</MenuItem>
-                  </Select>
-                </FormControl>
+                <TextField
+                  autoComplete="User Type"
+                  name="userType"
+                  fullWidth
+                  id="userType"
+                  disabled
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? usertype : "User Type"}
+                />
               </Grid>
 
               <Grid item xs={12} sm={12}>
                 <TextField
                   autoComplete="AssetID"
                   name="assetID"
-                  required
                   fullWidth
                   id="assetID"
-                  label="AssetID"
-                  autoFocus
+                  disabled
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? assetId : "AssetID"}
                 />
               </Grid>
+
               <Grid item xs={12} sm={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="capacityOrLoad"
-                  label="Capacity or Load"
-                  name="capacityOrLoad"
-                  autoComplete="capacityOrLoad"
-                />
+                <FormControl fullWidth required size='medium'>
+                  <InputLabel id="amount-type-select">Amount Type</InputLabel>
+                  <Select
+                    labelId="amount-type-select"
+                    id="amount-type-select"
+                    value={amountType}
+                    label= "Amount Type"
+                    onChange={handleAmountTypeChange}
+                  >          
+                    <MenuItem value={'buyETKAmount'}>buyETKAmount</MenuItem>
+                    <MenuItem value={'payETHAmount'}>payETHAmount</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
+
               <Grid item xs={12}>
-                <TextField
+                <TextField                 
+                  fullWidth
+                  id="amount"
+                  label="Amount"
+                  name="amount"
+                  autoComplete="amount"
+                  autoFocus
                   required
-                  fullWidth
-                  id="blockAmount"
-                  label="Block Amount"
-                  name="blockAmount"
-                  autoComplete="blockAmount"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  name="orderControl"
-                  label="Order Control (Optional)"
-                  type="orderControl"
-                  id="orderControl"
-                  autoComplete="orderControl"
-                />
-              </Grid>
+
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                  label="I have read and understand the terms and conditions of the agreement to buy ETK."
                 />
               </Grid>
             </Grid>
@@ -140,19 +171,12 @@ const BuyETK = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={!isRegisteredSupplier & !isRegisteredConsumer}
             >
               Submit
             </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
   </Layout>
 }

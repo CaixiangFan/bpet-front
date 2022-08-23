@@ -24,18 +24,6 @@ import {
   } from '@mui/material';
   import { useSnackbar, closeSnackbar } from 'notistack';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://www.aeso.ca/aeso/about-the-aeso/"  target="_blank">
-        AESO
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const Register = () => {
   // const router = useRouter()
@@ -114,18 +102,18 @@ const Register = () => {
       enqueueSnackbar("You must login Metamask to continue", { variant: 'info', preventDuplicate: true});
       return
     }
-    console.log('Registry Input Data: ', registryData);
+    // console.log('Registry Input Data: ', registryData);
     const register = async (usertype, registryData) => {
       // validate signature
-      enqueueSnackbar(`You are registering ${registryData.assetID}, waiting for confirmation...`, { variant: 'success' })
+      enqueueSnackbar(`You are registering ${registryData.assetID}, waiting for confirmation...`, { variant: 'success' });
       await registerUser(usertype, registryData);
       enqueueSnackbar("User registered successfully!", { variant: 'success', preventDuplicate: true});
       if (usertype === 'Supplier') {
         const registeredSupplier = await registryContractRead.getSupplier(signer.getAddress());
-        console.log('Registered supplier: ', registeredSupplier);
+        // console.log('Registered supplier: ', registeredSupplier);
       } else {
         const registeredConsumer = await registryContractRead.getConsumer(signer.getAddress());
-        console.log('Registered consumer: ', registeredConsumer);
+        // console.log('Registered consumer: ', registeredConsumer);
       }
     }
     register(usertype, registryData);
@@ -249,16 +237,8 @@ const Register = () => {
             >
               {isRegisteredSupplier || isRegisteredConsumer ? 'Already Registered' : 'Submit'}
             </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
   </Layout>
 }
