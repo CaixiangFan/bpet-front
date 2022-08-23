@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack';
 import Head from 'next/head';
 import TopBar from 'components/topbar';
 import { Store } from "utils/Store";
+import Copyright from "components/copyright"
 import PoolPrice from 'components/realtime-price';
 
 const Layout = ({title, children}) => {
@@ -20,6 +21,7 @@ const Layout = ({title, children}) => {
       <TopBar />
       <PoolPrice />
       {children}
+      <Copyright sx={{ mt: 4 }} />
     </>
   )
 }
