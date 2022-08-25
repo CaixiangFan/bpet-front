@@ -3,12 +3,14 @@ import Layout from 'components/layout';
 import { ethers } from "ethers";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+// import Web3Modal from 'web3modal';
 import {
   registryContractRead, 
   REGISTRY_CONTRACT_ADDRESS,
   tokenContractRead,
   TOKEN_CONTRACT_ADDRESS
 } from 'utils/const';
+import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";
 import {
@@ -33,11 +35,11 @@ import {
 const BuyETK = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
-  const { walletConencted, correctNetworkConnected, account, provider, signer, ticketCategories } = state;
+  const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
   const [usertype, setUsertype] = useState('');
   const [assetId, setAssetId] = useState('');
   const [etkBalance, setETKBalance] = useState(0);
-  const [amountType, setAmountType] = useState('buyETKAmount');
+  const [actionType, setActionType] = useState('buyETK');
   const [offerControl, setOfferControl] = useState('');
   const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
   const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
@@ -66,18 +68,95 @@ const BuyETK = () => {
     checkRegistered();
   }, [account])
   
-  const handleAmountTypeChange = (event) => {
-    setAmountType(event.target.value);
+  const handleActionTypeChange = (event) => {
+    setActionType(event.target.value);
+  }
+
+  const inputValidate = (etkData) => {
+    let allValid = true;
+    if (etkData.actionType.length === 0) {
+      allValid = false;
+      enqueueSnackbar('You must select an action type', { variant: 'error' })
+    }
+
+    if (etkData.amount <= 0) {
+      allValid = false;
+      enqueueSnackbar('You must input a positive amount', { variant: 'error' })
+    }
+    return allValid;
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      amountType: amountType,
-      amount: data.get('amount'),
-    });
+    const etkData = {
+      balance: data.get('balance'),
+      usertype: usertype,
+      assetID: data.get('assetID'),
+      actionType: actionType,
+      amount: Number(data.get('amount'))
+    };
+    const valid = inputValidate(etkData);
+    if (!valid) return;
+
+    if (!walletConencted || !signer) {
+      enqueueSnackbar("You must login Metamask to continue", { variant: 'info', preventDuplicate: true});
+      return
+    }
+
+    if (actionType === 'buyETK') {
+      const buyToken = async (amount) => {
+        await buyETK(amount);
+      }
+      buyToken(etkData.amount);
+    }
+
+    if (actionType === 'redeemETK') {
+      const redeemToken = async (amount) => {
+        await redeemETK(amount);
+      }
+      redeemToken(etkData.amount);
+    }
+
   };
+
+  // const getAdminSigner = async (adminAddress) => {
+  //   const web3Modal = new Web3Modal({ network: 'mainnet', cacheProvider: true })
+  //   const connection = await web3Modal.connect();
+  //   const _provider = new ethers.providers.Web3Provider(connection);
+  //   const _adminSigner = _provider.getSigner(adminAddress);
+  //   return _adminSigner;
+  // }
+
+  const buyETK = async (amount) => {
+    console.log('contract signer address', account);
+    try {
+      const _adminAddress = await tokenContractRead.owner();
+      // const adminSigner = await getAdminSigner(_adminAddress);
+      // console.log('admin signer address', await adminSigner.getAddress());
+      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+      // Confirm receiving amount of fiat money from user before transfer the ETK
+      await tokenContractWrite.transferFrom(_adminAddress, account, amount);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const redeemETK = async (amount) => {
+    try{
+      const _adminAddress = await tokenContractRead.owner();
+      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+      // console.log('contract signer address', account);
+      await tokenContractWrite.transfer(_adminAddress, amount);
+      // const adminSigner = await getAdminSigner(_adminAddress);
+      // console.log('admin signer address', await adminSigner.getAddress());
+      // const adminTokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, adminSigner);
+      // Transfer amount of fiat money to user's account before burning the ETK
+      // await adminTokenContractWrite.burnFrom(account, amount);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return <Layout title='BuyETK'>
       <Container component="main" maxWidth="xs">
@@ -94,7 +173,7 @@ const BuyETK = () => {
             <MonetizationOnIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Buy Energy Token (ETK)
+            Buy/Redeem Energy Token (ETK)
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -133,16 +212,16 @@ const BuyETK = () => {
 
               <Grid item xs={12} sm={12}>
                 <FormControl fullWidth required size='medium'>
-                  <InputLabel id="amount-type-select">Amount Type</InputLabel>
+                  <InputLabel id="action-type-select">Action Type</InputLabel>
                   <Select
-                    labelId="amount-type-select"
-                    id="amount-type-select"
-                    value={amountType}
-                    label= "Amount Type"
-                    onChange={handleAmountTypeChange}
+                    labelId="action-type-select"
+                    id="action-type-select"
+                    value={actionType}
+                    label= "Action Type"
+                    onChange={handleActionTypeChange}
                   >          
-                    <MenuItem value={'buyETKAmount'}>buyETKAmount</MenuItem>
-                    <MenuItem value={'payETHAmount'}>payETHAmount</MenuItem>
+                    <MenuItem value={'buyETK'}>buyETK</MenuItem>
+                    <MenuItem value={'redeemETK'}>redeemETK</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
