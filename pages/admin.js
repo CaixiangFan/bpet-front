@@ -1,12 +1,38 @@
 import React, { useContext, useState, useEffect } from 'react'
 // import axios from 'axios';
-import { Typography, Box, Grid, Button, ListItem, List, TextField, InputLabel, MenuItem, FormControl, Select, Paper } from '@mui/material';
+import { ethers } from 'ethers';
+import {
+  Avatar,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  TextField,
+  CssBaseline,
+  Container,
+  Typography,
+  Checkbox,
+  Link,
+  Grid,
+  Box
+} from '@mui/material';
+import { Store } from "utils/Store";
 // import List from '@mui/joy/List';
 // import ListItem from '@mui/joy/ListItem';
 // import { useRouter } from 'next/router'
-// import { useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import Layout from 'components/layout'
 import { DataGrid } from '@mui/x-data-grid';
+import {
+  registryContractRead, 
+  REGISTRY_CONTRACT_ADDRESS,
+  tokenContractRead,
+  TOKEN_CONTRACT_ADDRESS
+} from 'utils/const';
+import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
+import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -53,29 +79,209 @@ const rows = [
 ];
 
 const Admin = () => {
-  const [usertype, setUsertype] = React.useState('');
+  const [usertype, setUsertype] = useState('');
+  const { state, dispatch } = useContext(Store);
+  const [loaded, setLoaded] = useState(false);
+  const [adminConnected, setAdminConnected] = useState(false);
+  const [actionType, setActionType] = useState('mintETK');
+  const [etkBalance, setETKBalance] = useState(0);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { adminAddress, walletConencted, correctNetworkConnected, account, provider, signer } = state;
 
-  const handleChange = (event) => {
+  const updateBalance = async () => {
+    console.log(account);
+    const tokenBalance = await tokenContractRead.balanceOf(account);
+    setETKBalance(ethers.utils.formatEther(tokenBalance));
+  }
+  
+  const handleUserTypeSelectChange = (event) => {
     setUsertype(event.target.value);
   };
-  // useEffect(() => {
-  //   if (adminAddress.length === 0 || account.length == 0) {
-  //     setLoaded(false)
-  //     setAdminConnected(false)
-  //   }
-  //   if (adminAddress === account) {
-  //     closeSnackbar()
-  //     enqueueSnackbar('Welcome to the admin dashboard', { variant: 'success' })
-  //     setAdminConnected(true)
-  //   } else {
-  //     closeSnackbar()
-  //     enqueueSnackbar('Sorry, you are not admin of the contract', { variant: 'error' })
-  //     setAdminConnected(false)
-  //   }
-  // }, [account, adminAddress])
 
+  useEffect(() => {
+    if (adminAddress.length === 0 || account.length == 0) {
+      setLoaded(false);
+      setAdminConnected(false);
+    }
+    if (adminAddress === account) {
+      closeSnackbar();
+      enqueueSnackbar('Welcome to the admin dashboard', { variant: 'success', preventDuplicate: true });
+      setAdminConnected(true);
+      updateBalance();
+    } else {
+      closeSnackbar();
+      enqueueSnackbar('Sorry, you are not admin of the contract', { variant: 'error', preventDuplicate: true });
+      setAdminConnected(false);
+    }
+  }, [account, adminAddress])
+
+  const handleActionTypeChange = (event) => {
+    setActionType(event.target.value);
+  }
+
+  const inputValidate = (etkData) => {
+    let allValid = true;
+    if (etkData.actionType.length === 0) {
+      allValid = false;
+      enqueueSnackbar('You must select an action type', { variant: 'error' })
+    }
+
+    if (etkData.amount <= 0) {
+      allValid = false;
+      enqueueSnackbar('You must input a positive amount', { variant: 'error' })
+    }
+    return allValid;
+  }
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    // console.log({
+    //   actionType: actionType,
+    //   amount: data.get('amount'),
+    // });
+    const etkData = {
+      balance: data.get('balance'),
+      actionType: actionType,
+      amount: Number(data.get('amount'))
+    };
+    const valid = inputValidate(etkData);
+    if (!valid) return;
+
+    if (!walletConencted || !signer) {
+      enqueueSnackbar("You must login Metamask to continue", { variant: 'info', preventDuplicate: true});
+      return
+    }
+
+    if (actionType === 'mintETK') {
+      const mintToken = async (amount) => {
+        await mintETK(amount);
+      }
+      mintToken(etkData.amount);
+    }
+
+    if (actionType === 'burnETK') {
+      const burnToken = async (amount) => {
+        await burnETK(amount);
+      }
+      burnToken(etkData.amount);
+    }
+    updateBalance();
+  }
+
+  const mintETK = async (amount) => {
+    try {
+      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+      await tokenContractWrite.mint(account, amount);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const burnETK = async (amount) => {
+    try{
+      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+      await tokenContractWrite.burn(amount);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const handleClickSearch = (event) => {
+    event.preventDefault();
+    const getUsers = async (userType) => {
+      try{
+        const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, signer);
+        if (userType === 'suppliers') {
+          const registeredSuppliers = await registryContractWrite.getAllSuppliers();
+          console.log('supplier addresses: ', registeredSuppliers);
+        } 
+        if (userType === 'consumers') {
+          const registeredConsumers = await registryContractWrite.getAllConsumers();
+          console.log('Consumer addresses: ', registeredConsumers);
+        }
+      } catch(err) {
+        console.log(err);
+      }
+    }
+    getUsers(usertype);
+    // console.log('usertype: ', usertype);
+  }
   return (
     <Layout title="Admin">
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          </Box>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    id="balance"
+                    label={etkBalance}
+                    name="etkBalance"
+                    autoComplete="etkBalance"
+                    disabled
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12}>
+                  <FormControl fullWidth required size='medium'>
+                    <InputLabel id="action-type-select">Action Type</InputLabel>
+                    <Select
+                      labelId="action-type-select"
+                      id="action-type-select"
+                      value={actionType}
+                      label= "Action Type"
+                      onChange={handleActionTypeChange}
+                    >          
+                      <MenuItem value={'mintETK'}>mintETK</MenuItem>
+                      <MenuItem value={'burnETK'}>burnETK</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField                 
+                    fullWidth
+                    id="amount"
+                    label="Amount"
+                    name="amount"
+                    autoComplete="amount"
+                    autoFocus
+                    required
+                  />
+                </Grid>
+
+                {/* <Grid item xs={12}>
+                  <FormControlLabel
+                    control={<Checkbox value="allowExtraEmails" color="primary" />}
+                    label="I have read and understand the terms and conditions of the agreement to buy ETK."
+                  />
+                </Grid> */}
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                disabled={adminAddress != account}
+              >
+                Submit
+              </Button>
+            </Box>
+          <Box/>
+        </Container>
+
       <Box sx = {{
         alignItems: 'center',
         marginTop: '2rem',
@@ -88,7 +294,7 @@ const Admin = () => {
       
       <Box
         sx={{
-          marginTop: '3rem',
+          marginTop: 1,
           display: 'flex',
           // gridTemplateRows: 'repeat(2, 1fr)',
           alignItems: 'center',
@@ -107,19 +313,19 @@ const Admin = () => {
 
           <Grid item xs={12} sm={9}>
             <FormControl fullWidth size='small'>
-              <InputLabel id="demo-simple-select-label">User Type</InputLabel>
+              <InputLabel id="user-type-select">User Type</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="user-type-select"
+                id="user-type-select"
                 value={usertype}
                 label="User Type"
-                onChange={handleChange}
+                onChange={handleUserTypeSelectChange}
               >          
-                <MenuItem value="">
+                {/* <MenuItem value="">
                   <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>All Registered Suppliers</MenuItem>
-                <MenuItem value={20}>All Registered Consumers</MenuItem>
+                </MenuItem> */}
+                <MenuItem value={'suppliers'}>All Registered Suppliers</MenuItem>
+                <MenuItem value={'consumers'}>All Registered Consumers</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -129,6 +335,7 @@ const Admin = () => {
                 type="Search"
                 variant="contained"
                 sx={{ mt: 0, mb: 2 }}
+                onClick={ handleClickSearch }
               >
             Search
             </Button>
