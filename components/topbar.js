@@ -57,27 +57,6 @@ const ResponsiveAppBar = () => {
     console.log('STATE RESETTED ...');
   };
 
-  // const updateAllTicketInfo = async () => {
-  //   let size = await contractRead.getTicketCategoryArraySize()
-  //   size = size.toNumber()
-  //   if (size === 0) {
-  //     enqueueSnackbar('Ticket Categories Not Set Yet!', { variant: 'error' })
-  //     return
-  //   }
-  //   let ticketCategories = []
-  //   for (let i = 0; i < size; i++) {
-  //     const ticket = await contractRead.ticketCategoryArray(i);
-  //     const categoryName = ethers.utils.parseBytes32String(ticket.categoryName)
-  //     const ticketDetails = await contractRead.ticketCategoryMapping(ticket.categoryName)
-  //     const ticketPrice = ethers.utils.formatEther(ticketDetails.ticketPrice)
-  //     const maxNoOfTickets = ticketDetails.maxNoOfTickets.toNumber()
-  //     const numberOfTicketsBought = ticketDetails.numberOfTicketsBought.toNumber()
-  //     // console.log(categoryName, ticketPrice, maxNoOfTickets, numberOfTicketsBought)
-  //     ticketCategories.push({ categoryName, ticketPrice, maxNoOfTickets, numberOfTicketsBought })
-  //   }
-  //   dispatch({ type: 'UPDATE_TICKET_CATEGORIES', payload: ticketCategories})
-  // }
-
   const updateProvider = async () => {
     const connection = await web3Modal.connect();
     const _provider = new ethers.providers.Web3Provider(connection);

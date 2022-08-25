@@ -78,9 +78,9 @@ const Register = () => {
       allValid = false;
       enqueueSnackbar('You must input AssetID', { variant: 'error' })
     }
-    if (registryData.capacityOrLoad == 0) {
+    if (registryData.capacityOrLoad <= 0) {
       allValid = false;
-      enqueueSnackbar('You must input non-zero capacity or load', { variant: 'error' })
+      enqueueSnackbar('You must input a positive capacity or load', { variant: 'error' })
     }
     return allValid;
   }
