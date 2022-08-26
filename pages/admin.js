@@ -3,8 +3,10 @@ import React, { useContext, useState, useEffect } from 'react'
 import { ethers } from 'ethers';
 import {
   Avatar,
+  Alert,
   Button,
   Select,
+  Snackbar,
   MenuItem,
   FormControl,
   FormControlLabel,
@@ -12,6 +14,10 @@ import {
   TextField,
   CssBaseline,
   Container,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
   Typography,
   Checkbox,
   Link,
@@ -34,68 +40,149 @@ import {
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
 import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
+const supplierColumns = [
+  { field: 'id', headerName: 'ID', width: 50 },
   {
-    field: 'firstName',
-    headerName: 'First name',
-    width: 150,
+    field: 'account',
+    headerName: 'Account',
+    width: 240,
+    editable: false,
+  },
+  {
+    field: 'assetId',
+    headerName: 'Asset ID',
+    width: 90,
     editable: true,
   },
   {
-    field: 'lastName',
-    headerName: 'Last name',
-    width: 150,
+    field: 'allowance',
+    headerName: 'Allowance',
+    width: 90,
     editable: true,
   },
   {
-    field: 'age',
-    headerName: 'Age',
+    field: 'blockAmount',
+    headerName: 'Blocks',
     type: 'number',
-    width: 110,
+    width: 60,
     editable: true,
   },
   {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
+    field: 'capacity',
+    headerName: 'Capacity',
+    type: 'number',
+    width: 90,
+    editable: true,
+  },
+  {
+    field: 'offerControl',
+    headerName: 'Offer Control',
     sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    width: 160
   },
 ];
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+const consumerColumns = [
+  { field: 'id', headerName: 'ID', width: 50 },
+  {
+    field: 'account',
+    headerName: 'Account',
+    width: 240,
+    editable: false,
+  },
+  {
+    field: 'assetId',
+    headerName: 'Asset ID',
+    width: 90,
+    editable: true,
+  },
+  {
+    field: 'allowance',
+    headerName: 'Allowance',
+    width: 90,
+    editable: true,
+  },
+  {
+    field: 'load',
+    headerName: 'Load',
+    type: 'number',
+    width: 90,
+    editable: true,
+  },
+  {
+    field: 'offerControl',
+    headerName: 'Offer Control',
+    sortable: false,
+    width: 160
+  },
 ];
+
+const computeMutation = (newRow, oldRow) => {
+  if (newRow.allowance !== oldRow.allowance) {
+    return `Allowance from '${oldRow.allowance}' to '${newRow.allowance}'`;
+  }
+  // if (newRow.age !== oldRow.age) {
+  //   return `Age from '${oldRow.age || ''}' to '${newRow.age || ''}'`;
+  // }
+  return null;
+}
+
 
 const Admin = () => {
-  const [usertype, setUsertype] = useState('');
+  const [usertype, setUsertype] = useState('suppliers');
   const { state, dispatch } = useContext(Store);
   const [loaded, setLoaded] = useState(false);
   const [adminConnected, setAdminConnected] = useState(false);
   const [actionType, setActionType] = useState('mintETK');
   const [etkBalance, setETKBalance] = useState(0);
+  const [tabRows, setTabRows] = useState([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { adminAddress, walletConencted, correctNetworkConnected, account, provider, signer } = state;
+  const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+  const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, signer);
+
+  const useRowMutation = () => {
+    return React.useCallback(
+      (user) =>
+        new Promise((resolve, reject) =>
+          setTimeout(() => {
+            if (user.allowance?.trim() === '') {
+              reject(new Error("Error while saving user: name can't be empty."));
+            } else {
+              try {
+                const updateAllowance = async () => {
+                  await tokenContractWrite.approve(user.account, user.allowance);
+                }
+                updateAllowance();
+              } catch (err) {
+                console.log(err);
+              }
+              resolve(user);
+            }
+          }, 200),
+        ),
+      [],
+    );
+  };
+  
+  const mutateRow = useRowMutation();
+  const noButtonRef = React.useRef(null);
+  const [promiseArguments, setPromiseArguments] = React.useState(null);
+
+  const [snackbar, setSnackbar] = React.useState(null);
+
+  const handleCloseSnackbar = () => setSnackbar(null);
 
   const updateBalance = async () => {
-    console.log(account);
     const tokenBalance = await tokenContractRead.balanceOf(account);
-    setETKBalance(ethers.utils.formatEther(tokenBalance));
+    const decimals = await tokenContractRead.decimals();
+
+    setETKBalance(ethers.utils.formatEther(tokenBalance) * 10 ** decimals);
   }
   
   const handleUserTypeSelectChange = (event) => {
     setUsertype(event.target.value);
+    setTabRows([]);
   };
 
   useEffect(() => {
@@ -103,7 +190,7 @@ const Admin = () => {
       setLoaded(false);
       setAdminConnected(false);
     }
-    if (adminAddress === account) {
+    else if (adminAddress === account) {
       closeSnackbar();
       enqueueSnackbar('Welcome to the admin dashboard', { variant: 'success', preventDuplicate: true });
       setAdminConnected(true);
@@ -137,10 +224,6 @@ const Admin = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // console.log({
-    //   actionType: actionType,
-    //   amount: data.get('amount'),
-    // });
     const etkData = {
       balance: data.get('balance'),
       actionType: actionType,
@@ -157,6 +240,8 @@ const Admin = () => {
     if (actionType === 'mintETK') {
       const mintToken = async (amount) => {
         await mintETK(amount);
+        enqueueSnackbar("Admin minted tokens successfully!", { variant: 'success', preventDuplicate: true});
+        await updateBalance();
       }
       mintToken(etkData.amount);
     }
@@ -164,15 +249,15 @@ const Admin = () => {
     if (actionType === 'burnETK') {
       const burnToken = async (amount) => {
         await burnETK(amount);
+        enqueueSnackbar("Admin burned tokens successfully!", { variant: 'success', preventDuplicate: true});
+        await updateBalance();
       }
       burnToken(etkData.amount);
     }
-    updateBalance();
   }
 
   const mintETK = async (amount) => {
     try {
-      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
       await tokenContractWrite.mint(account, amount);
     } catch (err) {
       console.log(err);
@@ -181,33 +266,134 @@ const Admin = () => {
 
   const burnETK = async (amount) => {
     try{
-      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
       await tokenContractWrite.burn(amount);
     } catch (err) {
       console.log(err);
     }
   }
 
+  const getUsers = async (userType) => {
+    try{
+      if (userType === 'suppliers') {
+        const registeredSuppliers = await registryContractWrite.getAllSuppliers();
+        let suppliers = [];
+        for (let i=0; i<registeredSuppliers.length; i++) {
+          const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
+          const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
+          suppliers.push({
+            id: i+1, 
+            account: supplier.account,
+            assetId: supplier.assetId,
+            allowance: _allowance,
+            blockAmount: supplier.blockAmount,
+            capacity: supplier.capacity,
+            offerControl: supplier.offerControl
+          });
+        }
+        setTabRows(suppliers);
+      } 
+      if (userType === 'consumers') {
+        const registeredConsumers = await registryContractWrite.getAllConsumers();
+        let consumers = [];
+        for (let i=0; i<registeredConsumers.length; i++) {
+          const consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
+          const _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
+          consumers.push({
+            id: i+1, 
+            account: consumer.account,
+            assetId: consumer.assetId,
+            allowance: _allowance,
+            load: consumer.load,
+            offerControl: consumer.offerControl
+          });
+        }
+        setTabRows(consumers);
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
   const handleClickSearch = (event) => {
     event.preventDefault();
-    const getUsers = async (userType) => {
-      try{
-        const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, signer);
-        if (userType === 'suppliers') {
-          const registeredSuppliers = await registryContractWrite.getAllSuppliers();
-          console.log('supplier addresses: ', registeredSuppliers);
-        } 
-        if (userType === 'consumers') {
-          const registeredConsumers = await registryContractWrite.getAllConsumers();
-          console.log('Consumer addresses: ', registeredConsumers);
-        }
-      } catch(err) {
-        console.log(err);
-      }
-    }
     getUsers(usertype);
-    // console.log('usertype: ', usertype);
   }
+
+  const processRowUpdate = React.useCallback(
+    (newRow, oldRow) =>
+      new Promise((resolve, reject) => {
+        const mutation = computeMutation(newRow, oldRow);
+        if (mutation) {
+          // Save the arguments to resolve or reject the promise later
+          setPromiseArguments({ resolve, reject, newRow, oldRow });
+        } else {
+          resolve(oldRow); // Nothing was changed
+        }
+      }),
+    [],
+  );
+
+  const handleNo = () => {
+    const { oldRow, resolve } = promiseArguments;
+    resolve(oldRow); // Resolve with the old row to not update the internal state
+    setPromiseArguments(null);
+  };
+
+  const handleYes = async () => {
+    const { newRow, oldRow, reject, resolve } = promiseArguments;
+
+    try {
+      // Make the HTTP request to save in the backend
+      const response = await mutateRow(newRow);
+      setSnackbar({ children: 'User successfully updated', severity: 'success' });
+      resolve(response);
+      setPromiseArguments(null);
+    } catch (error) {
+      setSnackbar({ children: "Allowance can't be empty", severity: 'error' });
+      reject(oldRow);
+      setPromiseArguments(null);
+    }
+  };
+
+  const handleEntered = () => {
+    // The `autoFocus` is not used because, if used, the same Enter that saves
+    // the cell triggers "No". Instead, we manually focus the "No" button once
+    // the dialog is fully open.
+    // noButtonRef.current?.focus();
+  };
+
+  const handleProcessRowUpdateError = React.useCallback((error) => {
+    setSnackbar({ children: error.message, severity: 'error' });
+  }, []);
+
+  const renderConfirmDialog = () => {
+    if (!promiseArguments) {
+      return null;
+    }
+
+    const { newRow, oldRow } = promiseArguments;
+    const mutation = computeMutation(newRow, oldRow);
+
+    return (
+      <Dialog
+        maxWidth="xs"
+        TransitionProps={{ onEntered: handleEntered }}
+        open={!!promiseArguments}
+      >
+        <DialogTitle>Are you sure?</DialogTitle>
+        <DialogContent dividers>
+          {`Pressing 'Yes' will change ${mutation}.`}
+        </DialogContent>
+        <DialogActions>
+          <Button ref={noButtonRef} onClick={handleNo}>
+            No
+          </Button>
+          <Button onClick={handleYes}>Yes</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   return (
     <Layout title="Admin">
       <Container component="main" maxWidth="xs">
@@ -336,6 +522,7 @@ const Admin = () => {
                 variant="contained"
                 sx={{ mt: 0, mb: 2 }}
                 onClick={ handleClickSearch }
+                disabled={ adminAddress != account }
               >
             Search
             </Button>
@@ -343,15 +530,23 @@ const Admin = () => {
 
           <Grid item xs={12}>
             <Box sx={{ height: 500, width: '100%' }}>
+              {renderConfirmDialog()}
               <DataGrid
-                rows={rows}
-                columns={columns}
+                rows={tabRows}
+                columns={usertype === 'suppliers' ? supplierColumns : consumerColumns}
+                processRowUpdate={processRowUpdate}
+                onProcessRowUpdateError={handleProcessRowUpdateError}
                 pageSize={10}
                 rowsPerPageOptions={[10]}
                 checkboxSelection
                 disableSelectionOnClick
                 experimentalFeatures={{ newEditingApi: true }}
               />
+              {!!snackbar && (
+                <Snackbar open onClose={handleCloseSnackbar} autoHideDuration={6000}>
+                  <Alert {...snackbar} onClose={handleCloseSnackbar} />
+                </Snackbar>
+              )}
             </Box>
           </Grid>
 
