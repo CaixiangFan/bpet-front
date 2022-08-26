@@ -111,10 +111,14 @@ const Register = () => {
       if (usertype === 'Supplier') {
         const registeredSupplier = await registryContractRead.getSupplier(signer.getAddress());
         // console.log('Registered supplier: ', registeredSupplier);
-      } else {
+        setIsRegisteredSupplier(true);
+      } else if (usertype === 'consumer') {
         const registeredConsumer = await registryContractRead.getConsumer(signer.getAddress());
         // console.log('Registered consumer: ', registeredConsumer);
+        setIsRegisteredConsumer(true);
       }
+      
+
     }
     register(usertype, registryData);
   };
