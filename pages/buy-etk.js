@@ -2,8 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import Layout from 'components/layout';
 import { ethers } from "ethers";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import Web3Modal from 'web3modal';
 import {
   registryContractRead, 
   REGISTRY_CONTRACT_ADDRESS,
@@ -63,7 +61,8 @@ const BuyETK = () => {
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);
       const _etkBalance = await tokenContractRead.balanceOf(account);
-      setETKBalance(ethers.utils.formatEther(_etkBalance));
+      const _decimals = await tokenContractRead.decimals();
+      setETKBalance(ethers.utils.formatEther(_etkBalance) * 10 ** _decimals);
     }
     checkRegistered();
   }, [account])
@@ -107,6 +106,10 @@ const BuyETK = () => {
     if (actionType === 'buyETK') {
       const buyToken = async (amount) => {
         await buyETK(amount);
+        enqueueSnackbar("You bought tokens successfully!", { variant: 'success', preventDuplicate: true});
+        const _etkBalance = await tokenContractRead.balanceOf(account);
+        const _decimals = await tokenContractRead.decimals();
+        setETKBalance(ethers.utils.formatEther(_etkBalance) * 10 ** _decimals);
       }
       buyToken(etkData.amount);
     }
@@ -114,26 +117,19 @@ const BuyETK = () => {
     if (actionType === 'redeemETK') {
       const redeemToken = async (amount) => {
         await redeemETK(amount);
+        enqueueSnackbar("You burned tokens successfully!", { variant: 'success', preventDuplicate: true});
+        const _etkBalance = await tokenContractRead.balanceOf(account);
+        const _decimals = await tokenContractRead.decimals();
+        setETKBalance(ethers.utils.formatEther(_etkBalance) * 10 ** _decimals);
       }
       redeemToken(etkData.amount);
     }
 
   };
 
-  // const getAdminSigner = async (adminAddress) => {
-  //   const web3Modal = new Web3Modal({ network: 'mainnet', cacheProvider: true })
-  //   const connection = await web3Modal.connect();
-  //   const _provider = new ethers.providers.Web3Provider(connection);
-  //   const _adminSigner = _provider.getSigner(adminAddress);
-  //   return _adminSigner;
-  // }
-
   const buyETK = async (amount) => {
-    console.log('contract signer address', account);
     try {
       const _adminAddress = await tokenContractRead.owner();
-      // const adminSigner = await getAdminSigner(_adminAddress);
-      // console.log('admin signer address', await adminSigner.getAddress());
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
       // Confirm receiving amount of fiat money from user before transfer the ETK
       await tokenContractWrite.transferFrom(_adminAddress, account, amount);
@@ -146,13 +142,8 @@ const BuyETK = () => {
     try{
       const _adminAddress = await tokenContractRead.owner();
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
-      // console.log('contract signer address', account);
       await tokenContractWrite.transfer(_adminAddress, amount);
-      // const adminSigner = await getAdminSigner(_adminAddress);
-      // console.log('admin signer address', await adminSigner.getAddress());
-      // const adminTokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, adminSigner);
       // Transfer amount of fiat money to user's account before burning the ETK
-      // await adminTokenContractWrite.burnFrom(account, amount);
     } catch (err) {
       console.log(err);
     }
