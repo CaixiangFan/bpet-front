@@ -25,9 +25,6 @@ import {
   Box
 } from '@mui/material';
 import { Store } from "utils/Store";
-// import List from '@mui/joy/List';
-// import ListItem from '@mui/joy/ListItem';
-// import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack';
 import Layout from 'components/layout'
 import { DataGrid } from '@mui/x-data-grid';
@@ -52,7 +49,7 @@ const supplierColumns = [
     field: 'assetId',
     headerName: 'Asset ID',
     width: 90,
-    editable: true,
+    editable: false,
   },
   {
     field: 'allowance',
@@ -65,14 +62,14 @@ const supplierColumns = [
     headerName: 'Blocks',
     type: 'number',
     width: 60,
-    editable: true,
+    editable: false,
   },
   {
     field: 'capacity',
     headerName: 'Capacity',
     type: 'number',
     width: 90,
-    editable: true,
+    editable: false,
   },
   {
     field: 'offerControl',
@@ -94,7 +91,7 @@ const consumerColumns = [
     field: 'assetId',
     headerName: 'Asset ID',
     width: 90,
-    editable: true,
+    editable: false,
   },
   {
     field: 'allowance',
@@ -107,7 +104,7 @@ const consumerColumns = [
     headerName: 'Load',
     type: 'number',
     width: 90,
-    editable: true,
+    editable: false,
   },
   {
     field: 'offerControl',
@@ -197,7 +194,7 @@ const Admin = () => {
       updateBalance();
     } else {
       closeSnackbar();
-      enqueueSnackbar('Sorry, you are not admin of the contract', { variant: 'error', preventDuplicate: true });
+      enqueueSnackbar('Sorry, you are not admin', { variant: 'error', preventDuplicate: true, persist: true });
       setAdminConnected(false);
     }
   }, [account, adminAddress])
