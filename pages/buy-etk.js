@@ -46,7 +46,7 @@ const BuyETK = () => {
     if (account.length === 0) return
     const checkRegistered = async () => {
       const _isRegisteredSupplier = await registryContractRead.isRegisteredSupplier(account);
-      const _isRegisteredConsumer = await registryContractRead.isRegisteredSupplier(account);
+      const _isRegisteredConsumer = await registryContractRead.isRegisteredConsumer(account);
       if (_isRegisteredSupplier) {
         const registeredSupplier = await registryContractRead.getSupplier(account);
         setAssetId(registeredSupplier.assetId);
