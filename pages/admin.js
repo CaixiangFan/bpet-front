@@ -194,8 +194,8 @@ const Admin = () => {
       updateBalance();
     } else {
       closeSnackbar();
-      enqueueSnackbar('Sorry, you are not admin', { variant: 'error', preventDuplicate: true, persist: true });
       setAdminConnected(false);
+      enqueueSnackbar('Sorry, you are not admin', { variant: 'error', preventDuplicate: true, persist: true });
     }
   }, [account, adminAddress])
 
@@ -352,13 +352,6 @@ const Admin = () => {
     }
   };
 
-  const handleEntered = () => {
-    // The `autoFocus` is not used because, if used, the same Enter that saves
-    // the cell triggers "No". Instead, we manually focus the "No" button once
-    // the dialog is fully open.
-    // noButtonRef.current?.focus();
-  };
-
   const handleProcessRowUpdateError = React.useCallback((error) => {
     setSnackbar({ children: error.message, severity: 'error' });
   }, []);
@@ -406,18 +399,18 @@ const Admin = () => {
           </Box>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={12}>
+                <Grid item={true} xs={12} sm={12}>
                   <TextField
                     fullWidth
                     id="balance"
                     label={etkBalance}
                     name="etkBalance"
                     autoComplete="etkBalance"
-                    disabled
+                    disabled={true}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={12}>
+                <Grid item={true} xs={12} sm={12}>
                   <FormControl fullWidth required size='medium'>
                     <InputLabel id="action-type-select">Action Type</InputLabel>
                     <Select
@@ -433,7 +426,7 @@ const Admin = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid item={true} xs={12}>
                   <TextField                 
                     fullWidth
                     id="amount"
@@ -445,12 +438,6 @@ const Admin = () => {
                   />
                 </Grid>
 
-                {/* <Grid item xs={12}>
-                  <FormControlLabel
-                    control={<Checkbox value="allowExtraEmails" color="primary" />}
-                    label="I have read and understand the terms and conditions of the agreement to buy ETK."
-                  />
-                </Grid> */}
               </Grid>
               <Button
                 type="submit"
@@ -470,7 +457,7 @@ const Admin = () => {
         marginTop: '2rem',
       }}
       >
-        <Typography item component="h1" variant="h5" align='center'>
+        <Typography component="h1" variant="h5" align='center'>
           Search Participants from Blockchain
         </Typography>
       </Box>
@@ -494,7 +481,7 @@ const Admin = () => {
 
         <Grid container spacing={2}>
 
-          <Grid item xs={12} sm={9}>
+          <Grid item={true} xs={12} sm={9}>
             <FormControl fullWidth size='small'>
               <InputLabel id="user-type-select">User Type</InputLabel>
               <Select
@@ -513,7 +500,7 @@ const Admin = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={3}>
+          <Grid item={true} xs={12} sm={3}>
               <Button
                 type="Search"
                 variant="contained"
@@ -525,7 +512,7 @@ const Admin = () => {
             </Button>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item={true} xs={12}>
             <Box sx={{ height: 500, width: '100%' }}>
               {renderConfirmDialog()}
               <DataGrid

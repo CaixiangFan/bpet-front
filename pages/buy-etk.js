@@ -38,7 +38,6 @@ const BuyETK = () => {
   const [assetId, setAssetId] = useState('');
   const [etkBalance, setETKBalance] = useState(0);
   const [actionType, setActionType] = useState('buyETK');
-  const [offerControl, setOfferControl] = useState('');
   const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
   const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
 
@@ -175,7 +174,7 @@ const BuyETK = () => {
                   label={etkBalance}
                   name="etkBalance"
                   autoComplete="etkBalance"
-                  disabled
+                  disabled={true}
                 />
               </Grid>
 
@@ -185,7 +184,7 @@ const BuyETK = () => {
                   name="userType"
                   fullWidth
                   id="userType"
-                  disabled
+                  disabled={true}
                   label={(isRegisteredSupplier || isRegisteredConsumer) ? usertype : "User Type"}
                 />
               </Grid>
@@ -196,7 +195,7 @@ const BuyETK = () => {
                   name="assetID"
                   fullWidth
                   id="assetID"
-                  disabled
+                  disabled={true}
                   label={(isRegisteredSupplier || isRegisteredConsumer) ? assetId : "AssetID"}
                 />
               </Grid>
@@ -241,7 +240,7 @@ const BuyETK = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={!isRegisteredSupplier & !isRegisteredConsumer}
+              disabled={!isRegisteredSupplier && !isRegisteredConsumer}
             >
               Submit
             </Button>

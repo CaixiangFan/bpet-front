@@ -28,18 +28,13 @@ import {
     Grid,
     Box
   } from '@mui/material';
-import { SettingsEthernetSharp } from '@mui/icons-material';
-
-
 
 const SubmitOffer = () => {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
-  const [usertype, setUsertype] = useState('');
   const [assetId, setAssetId] = useState('');
-  const [energyAmount, setEnergyAmount] = useState(0);
   const [blockAmount, setBlockAmount] = useState(0);
   const [capacity, setCapacity] = useState(0);
   const [minPrice, setMinPrice] = useState(0);

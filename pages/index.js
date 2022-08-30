@@ -1,39 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ethers } from 'ethers';
-import { Typography, Box, Paper, Button, Card } from '@mui/material';
+import { Typography, Box, Paper } from '@mui/material';
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack';
 import Layout from 'components/layout'
 import { Store } from "utils/Store";
-import { defaultProvider, registryContractRead } from "utils/const";
 import SMPTable from 'components/homepage/table-smp';
 import PPTable from 'components/homepage/table-pp';
 
 const Home = () => {
   const router = useRouter()
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
-  const [eventDate, setEventDate] = useState('')
-  const [eventName, setEventName] = useState('')
-  const [eventTime, setEventTime] = useState('')
   const [loaded, setLoaded] = useState(false)
 
 
-  // useEffect(() => {
-  //   const init = async () => {
-  //     const eventDetails = await registryContractRead.eventDetails()
-  //     const _eventDate = ethers.utils.parseBytes32String(eventDetails.eventDate)
-  //     const _eventName = ethers.utils.parseBytes32String(eventDetails.eventName)
-  //     const _eventTime = ethers.utils.parseBytes32String(eventDetails.eventTime)
-  //     // console.log(eventDate,eventName, eventTime)
-  //     setEventDate(_eventDate)
-  //     setEventName(_eventName)
-  //     setEventTime(_eventTime)
-  //     setLoaded(true)
-  //   }
-  //   init()
-  // }, [])
+  useEffect(() => {
+    const init = async () => {
+      setLoaded(true)
+    }
+    init()
+  }, [])
 
   return (
     <Layout title="Alberta">
