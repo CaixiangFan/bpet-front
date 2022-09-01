@@ -105,7 +105,7 @@ const SubmitBid = () => {
     }
     const submitABid = async (bidData) => {
       await submitBid(bidData);
-      enqueueSnackbar("You submitted an offer successfully!", { variant: 'success', preventDuplicate: true});
+      enqueueSnackbar("You submitted a bid successfully!", { variant: 'success', preventDuplicate: true});
     }
     submitABid(bidData);
   };
