@@ -43,7 +43,7 @@ const Home = () => {
         >
           <Paper elevation={1}>
             <Typography variant='h4' alignContent='center' textAlign='center' margin='1.5rem'>Welcome to BPET !</Typography>
-            <Typography alignContent='center' textAlign='center'>Our blockchain-based peer-to-peer energy trading (BPET) system is a technology inavation for accelerating renewable energy flow in Alberta!</Typography>
+            <Typography alignContent='center' textAlign='center'>Our blockchain-based peer-to-peer energy trading (BPET) system is a technology innovation for accelerating renewable energy flow in Alberta!</Typography>
           </Paper>
         </Box>
       }
