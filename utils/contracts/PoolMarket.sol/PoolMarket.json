@@ -3,7 +3,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_REGISTRY_CONTRACT_ADDRESS",
+        "name": "_registryContractAddress",
         "type": "address"
       },
       {
@@ -131,19 +131,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint16",
-        "name": "_ail",
-        "type": "uint16"
-      }
-    ],
-    "name": "calculateSMP",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "string",
         "name": "_assetId",
         "type": "string"
@@ -212,6 +199,16 @@
         "internalType": "uint16",
         "name": "price",
         "type": "uint16"
+      },
+      {
+        "internalType": "uint256",
+        "name": "submitMinute",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "consumerAccount",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -295,6 +292,93 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "bidId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getEnergyBid",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint16",
+            "name": "amount",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "price",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint256",
+            "name": "submitMinute",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "consumerAccount",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct PoolMarket.Bid",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "offerId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getEnergyOffer",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint16",
+            "name": "amount",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "price",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint256",
+            "name": "submitMinute",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "supplierAccount",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isValid",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct PoolMarket.Offer",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "hour",
         "type": "uint256"
@@ -345,7 +429,20 @@
   },
   {
     "inputs": [],
-    "name": "getValidOffers",
+    "name": "getValidBidIDs",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getValidOfferIDs",
     "outputs": [
       {
         "internalType": "bytes32[]",
@@ -429,7 +526,7 @@
   },
   {
     "inputs": [],
-    "name": "registryContractRead",
+    "name": "registryContract",
     "outputs": [
       {
         "internalType": "contract IRegistry",
@@ -551,25 +648,12 @@
   {
     "inputs": [
       {
-        "internalType": "uint16",
-        "name": "ail",
-        "type": "uint16"
-      }
-    ],
-    "name": "updateDemand",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
     ],
-    "name": "validBids",
+    "name": "validBidIDs",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -588,7 +672,7 @@
         "type": "uint256"
       }
     ],
-    "name": "validOffers",
+    "name": "validOfferIDs",
     "outputs": [
       {
         "internalType": "bytes32",
