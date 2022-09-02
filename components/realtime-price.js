@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box, Paper, Button, Card } from '@mui/material';
+import { Typography, Box, Card } from '@mui/material';
+import { ethers } from 'ethers';
 import {
   poolmarketContractRead,
-  POOLMARKET_CONTRACT_ADDRESS,
+  tokenContractRead,
   defaultProvider
 } from 'utils/const';
+
+const options = {
+  year: "numeric", month: "numeric",  day: "numeric", hour: "2-digit", minute: "2-digit"  
+};
 
 const PoolPrice = () => {
   const [smps, setSMPs] = useState([]);
@@ -12,16 +17,17 @@ const PoolPrice = () => {
   const [proprice, setProPrice] = useState();
   const [hourEnding, setHourEnding] = useState();
 
-  const options = {
-    year: "numeric", month: "numeric",  day: "numeric", hour: "2-digit", minute: "2-digit"  
-  };
-
   const updatePrice = async () => {
     var datetime = new Date();
     setTime(datetime.toLocaleTimeString("en-us", options));
     setHourEnding(datetime.getHours() + 1);
-    var price = calculateProjectedPrice();
-    setProPrice(price); 
+    var _smps = await getsmp();
+    
+    var price = calculateProjectedPrice(_smps);
+    console.log('smps: ', _smps);
+    console.log('Current projected pool price', price);
+    setSMPs(_smps);
+    setProPrice(price);
   }
 
   const getsmp = async () => {
@@ -45,22 +51,30 @@ const PoolPrice = () => {
         }
       }
     }
-    setSMPs(smps);
-    console.log('SMPs: ', smps);
+    return smps;
   }
 
   //ToDo: simple average => weighted average
-  const calculateProjectedPrice = () => {
+  const calculateProjectedPrice = (_smps) => {
     var projectedPrice = 0;
-    if (smps.length == 0) return projectedPrice;
-    if (smps.length == 1) {
-      projectedPrice = Number(smps[0].Price);
+    if (_smps.length == 0) return projectedPrice;
+    if (_smps.length == 1) {
+      projectedPrice = Number(_smps[0].Price);
       return projectedPrice;
     }
-    for (let i=0; i<smps.length; i++) {
-      projectedPrice += Number(smps[i].Price);
+    for (let i=0; i<_smps.length; i++) {
+      var price = Number(_smps[i].Price);
+      var duration = 0;
+      if (i == 0) {
+        duration = Number(_smps[i+1].Time.split(':')[1]);
+      } else if (i == _smps.length - 1) {
+        duration = 60 - Number(_smps[i].Time.split(':')[1]);
+      } else {
+        duration = Number(_smps[i+1].Time.split(':')[1]) - Number(_smps[i].Time.split(':')[1]);
+      }
+      projectedPrice += price * duration;
     }
-    return Math.round((projectedPrice / smps.length + Number.EPSILON) * 100) / 100;
+    return Math.round((projectedPrice / 60) * 100) / 100;
   }
 
   const getOffers = async () => {
@@ -73,6 +87,19 @@ const PoolPrice = () => {
     console.log('All valid offers: ', offers);
   }
 
+  const getBids = async () => {
+    const decimals = await tokenContractRead.decimals();
+    const bidIds = await poolmarketContractRead.getValidBidIDs();
+    var bids = [];
+    for (let i=0; i<bidIds.length; i++) {
+      var bid = await poolmarketContractRead.getEnergyBid(bidIds[i]);
+      var submitTimeStamp = ethers.utils.formatEther(bid.submitMinute) * 10 ** decimals;
+      var submitTime = new Date(submitTimeStamp * 1000);
+      bids.push({"submitAt": submitTime.toLocaleTimeString('en-us', options), bid});
+    }
+    console.log('All valid bids: ', bids);
+  }
+
   const getDispatchedOffers = async () => {
     const currBlock = await defaultProvider.getBlock("latest");
     const currHour = Math.floor(currBlock.timestamp / 3600) * 3600;
@@ -82,8 +109,9 @@ const PoolPrice = () => {
 
   useEffect(() => {
     getOffers();
+    getBids();
     getDispatchedOffers();
-    getsmp();
+    // getsmp();
     updatePrice();
     const interval = setInterval(() => updatePrice(), 50000);
     return () => {
