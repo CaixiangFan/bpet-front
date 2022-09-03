@@ -7,14 +7,14 @@
         "type": "address"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "_minAllowedPrice",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "_maxAllowedPrice",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -31,15 +31,15 @@
       },
       {
         "indexed": false,
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "price",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "name": "BidSubmitted",
@@ -82,15 +82,15 @@
       },
       {
         "indexed": false,
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "price",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "name": "OfferSubmitted",
@@ -167,9 +167,9 @@
         "type": "address"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "dispatchedAmount",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -191,14 +191,14 @@
     "name": "energyBids",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "price",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -225,14 +225,14 @@
     "name": "energyOffers",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "price",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -271,9 +271,9 @@
             "type": "address"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint256",
             "name": "dispatchedAmount",
-            "type": "uint16"
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -302,14 +302,14 @@
       {
         "components": [
           {
-            "internalType": "uint16",
+            "internalType": "uint256",
             "name": "amount",
-            "type": "uint16"
+            "type": "uint256"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint256",
             "name": "price",
-            "type": "uint16"
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -343,14 +343,73 @@
       {
         "components": [
           {
-            "internalType": "uint16",
+            "internalType": "uint256",
             "name": "amount",
-            "type": "uint16"
+            "type": "uint256"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint256",
             "name": "price",
-            "type": "uint16"
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "submitMinute",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "supplierAccount",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isValid",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct PoolMarket.Offer",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLatestTotalDemand",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "minute",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarginalOffer",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "price",
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -387,9 +446,9 @@
     "name": "getPoolPrice",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -419,9 +478,22 @@
     "name": "getSMP",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint16"
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalDemandMinutes",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -471,9 +543,9 @@
     "name": "maxAllowedPrice",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -484,9 +556,9 @@
     "name": "minAllowedPrice",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -513,12 +585,31 @@
         "type": "uint256"
       }
     ],
+    "name": "poolPriceHours",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "poolPrices",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -552,14 +643,14 @@
         "type": "string"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "_amount",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "_price",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "name": "submitBid",
@@ -580,14 +671,14 @@
         "type": "uint8"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "price",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "name": "submitOffer",
@@ -603,29 +694,68 @@
         "type": "uint256"
       }
     ],
-    "name": "systemMarginalPrices",
+    "name": "systemMarginalMinutes",
     "outputs": [
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint16"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "totalDemand",
-    "outputs": [
-      {
-        "internalType": "uint16",
-        "name": "ail",
-        "type": "uint16"
-      },
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "lastUpdated",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "systemMarginalOfferIDs",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "totalDemandMinutes",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "totalDemands",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
         "type": "uint256"
       }
     ],

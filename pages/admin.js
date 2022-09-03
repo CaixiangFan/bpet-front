@@ -195,7 +195,7 @@ const Admin = () => {
     } else {
       closeSnackbar();
       setAdminConnected(false);
-      enqueueSnackbar('Sorry, you are not admin', { variant: 'error', preventDuplicate: true, persist: true });
+      enqueueSnackbar('Sorry, you are not admin', { variant: 'error', preventDuplicate: true });
     }
   }, [account, adminAddress])
 
