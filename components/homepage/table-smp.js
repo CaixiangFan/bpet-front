@@ -1,50 +1,72 @@
 // should be dynamic routes [tablename].js
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Box, Paper, Table, Card } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { convertBigNumberToNumber } from 'utils/tools';
+import {
+  poolmarketContractRead,
+  tokenContractRead,
+  defaultProvider
+} from 'utils/const';
 
-function createData( dateHe, time, price, volume ) {
-  return { dateHe, time, price, volume };
+function createData( id, dateHe, time, price, volume ) {
+  return { id, dateHe, time, price, volume };
 }
 
-const rows = [
-  createData('08/10/2022 22', '21:00', 118.01, 9),
-  createData('08/10/2022 21',	'20:49',	118.01,	10),
-  createData('08/10/2022 21',	'20:27',	721.08,	47),
-  createData('08/10/2022 21',	'20:16',	738.44,	47),
-  createData('08/10/2022 21',	'20:00',	749.16,	46),
-  createData('08/10/2022 20',	'19:50',	751.27,	45),
-  createData('08/10/2022 20',	'19:20',	774.04,	25),
-  createData('08/10/2022 20',	'19:07',	786.89,	48),
-  createData('08/10/2022 20',	'19:00',	800.99,	29),
-  createData('08/10/2022 19',	'18:27',	800.41,	29),
-  createData('08/10/2022 19',	'18:13',	780.09,	51),
-  createData('08/10/2022 19',	'18:05',	810.59,	44),
-  createData('08/10/2022 19',	'18:02',	838.18,	47),
-  createData('08/10/2022 19',	'18:00',	856.97,	46),
-];
-// async function getInitialProps() {
-//   const res = await axios.get('http://ets.aeso.ca/ets_web/ip/Market/Reports/CSMPriceReportServlet?contentType=html',{
-//     headers: {
-//       'X-Host': 'mall.film-ticket.film.list'
-//     }
-//   });
-//   return {
-//     films: res.data.data.films
-//   }
-// }
-
 const SMPTable = () => {
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    const updateTable = async () => {
+      const smps = await getsmp();
+      setRows(smps);
+    }
+    updateTable();
+  }, []);
+
+  //get all smps in the past
+  const getsmp = async () => {
+    // var datetime = new Date();
+    // const currentTime = Math.floor(datetime.getTime() / 1000);
+    // const startTime = currentTime - 3 * 3600;
+    console.log('current time: ', new Date().toLocaleTimeString('en-us'));
+    const totalDemandMinutes = await poolmarketContractRead.getTotalDemandMinutes();
+    const smps = [];
+    var index = 0;
+    for (let i=0; i<totalDemandMinutes.length; i++) {
+      var timestamp = totalDemandMinutes[i];
+      // if (timestamp < currentTime) {
+      var marginalOffer = await poolmarketContractRead.getMarginalOffer(timestamp);
+      var price = convertBigNumberToNumber(marginalOffer.price);
+      var volume = convertBigNumberToNumber(marginalOffer.amount);
+
+      var dateObj = new Date(timestamp * 1000);
+      var he = dateObj.toLocaleDateString("en-us");
+      var minutes = dateObj.getMinutes();
+      const hour = dateObj.getHours();
+      index += 1;
+      smps.push(createData(index,
+                          `${he} ${hour+1}`, 
+                          `${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}`,
+                          price,
+                          volume));
+      // }
+    }
+    console.log('SMP table content: ', smps);
+    return smps;
+  }
+
   return ( 
     <TableContainer component={Paper}>
       <Typography variant='h6' alignContent='center' textAlign='center' margin='1rem'>System Marginal Price</Typography>
       <Table sx={{ minWidth: 410 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
+            <TableCell>ID</TableCell>
             <TableCell>Date&nbsp;(HE)</TableCell>
             <TableCell align="center">Time</TableCell>
             <TableCell align="center">Price&nbsp;($)</TableCell>
@@ -54,12 +76,11 @@ const SMPTable = () => {
         <TableBody>
           {rows.map((row) => (
             <TableRow
-              key={row.time}
+              key={row.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
-                {row.dateHe}
-              </TableCell>
+              <TableCell align="center">{row.id}</TableCell>
+              <TableCell component="th" scope="row">{row.dateHe}</TableCell>
               <TableCell align="center">{row.time}</TableCell>
               <TableCell align="center">{row.price}</TableCell>
               <TableCell align="center">{row.volume}</TableCell>
