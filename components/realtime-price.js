@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Box, Card } from '@mui/material';
-import { ethers } from 'ethers';
+import { convertBigNumberToNumber } from 'utils/tools';
 import {
   poolmarketContractRead,
   tokenContractRead,
@@ -12,7 +12,6 @@ const options = {
 };
 
 const PoolPrice = () => {
-  const [smps, setSMPs] = useState([]);
   const [time, setTime] = useState();
   const [proprice, setProPrice] = useState();
   const [hourEnding, setHourEnding] = useState();
@@ -26,7 +25,7 @@ const PoolPrice = () => {
     var price = calculateProjectedPrice(_smps);
     console.log('smps: ', _smps);
     console.log('Current projected pool price', price);
-    setSMPs(_smps);
+    // setSMPs(_smps);
     setProPrice(price);
   }
 
@@ -47,14 +46,16 @@ const PoolPrice = () => {
           var date = new Date(currentMinute * 1000);
           var he = date.toLocaleDateString("en-us");
           var minutes = date.getMinutes();
-          smps.push({"DateHE": `${he} ${hour+1}`, "Time": `${hour}:${minutes}`, "Price": smp});
+          var marginalOffer = await poolmarketContractRead.getMarginalOffer(currentMinute);
+          var volume = convertBigNumberToNumber(marginalOffer.amount);
+          smps.push({"DateHE": `${he} ${hour+1}`, "Time": `${hour}:${minutes}`, "Price": convertBigNumberToNumber(smp), "Volume": volume});
         }
       }
     }
     return smps;
   }
 
-  //ToDo: simple average => weighted average
+  //ToDo: weighted average => calculate smp for every hour start
   const calculateProjectedPrice = (_smps) => {
     var projectedPrice = 0;
     if (_smps.length == 0) return projectedPrice;
@@ -82,18 +83,22 @@ const PoolPrice = () => {
     var offers = [];
     for (let i=0; i<offerIds.length; i++) {
       var offer = await poolmarketContractRead.getEnergyOffer(offerIds[i]);
-      offers.push(offer);
+      var amount = convertBigNumberToNumber(offer.amount);
+      var price = convertBigNumberToNumber(offer.price);
+      var submitMinute = convertBigNumberToNumber(offer.submitMinute);
+      var supplierAccount = offer.supplierAccount;
+      var isValid = offer.isValid;
+      offers.push({amount, price, submitMinute, supplierAccount, isValid});
     }
     console.log('All valid offers: ', offers);
   }
 
   const getBids = async () => {
-    const decimals = await tokenContractRead.decimals();
     const bidIds = await poolmarketContractRead.getValidBidIDs();
     var bids = [];
     for (let i=0; i<bidIds.length; i++) {
       var bid = await poolmarketContractRead.getEnergyBid(bidIds[i]);
-      var submitTimeStamp = ethers.utils.formatEther(bid.submitMinute) * 10 ** decimals;
+      var submitTimeStamp = convertBigNumberToNumber(bid.submitMinute);
       var submitTime = new Date(submitTimeStamp * 1000);
       bids.push({"submitAt": submitTime.toLocaleTimeString('en-us', options), bid});
     }
