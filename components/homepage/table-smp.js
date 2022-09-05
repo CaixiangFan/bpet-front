@@ -1,4 +1,3 @@
-// should be dynamic routes [tablename].js
 import React, { useState, useEffect } from "react";
 import { Typography, Box, Paper, Table, Card } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
@@ -6,6 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TablePagination from '@mui/material/TablePagination';
 import { convertBigNumberToNumber } from 'utils/tools';
 import {
   poolmarketContractRead,
@@ -13,12 +13,43 @@ import {
   defaultProvider
 } from 'utils/const';
 
-function createData( id, dateHe, time, price, volume ) {
-  return { id, dateHe, time, price, volume };
+const columns = [
+  { id: 'dateHe', label: 'Date (HE)', minWidth: 150, align: 'center', format: (value) => value.toLocaleString('en-US')},
+  {
+    id: 'time',
+    label: 'Time',
+    minWidth: 60,
+    align: 'center',
+    format: (value) => value.toLocaleString('en-US'),
+  },
+  { id: 'price', label: 'Price ($)', minWidth: 100,  align: 'center', format: (value) => value.toLocaleString('en-US')},
+
+  {
+    id: 'volume',
+    label: 'Volume (MW)',
+    minWidth: 150,
+    align: 'center',
+    format: (value) => value.toLocaleString('en-US'),
+  }
+];
+
+function createData( dateHe, time, price, volume ) {
+  return { dateHe, time, price, volume };
 }
 
 const SMPTable = () => {
   const [rows, setRows] = useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   useEffect(() => {
     const updateTable = async () => {
@@ -30,16 +61,11 @@ const SMPTable = () => {
 
   //get all smps in the past
   const getsmp = async () => {
-    // var datetime = new Date();
-    // const currentTime = Math.floor(datetime.getTime() / 1000);
-    // const startTime = currentTime - 3 * 3600;
-    console.log('current time: ', new Date().toLocaleTimeString('en-us'));
     const totalDemandMinutes = await poolmarketContractRead.getTotalDemandMinutes();
     const smps = [];
     var index = 0;
     for (let i=0; i<totalDemandMinutes.length; i++) {
       var timestamp = totalDemandMinutes[i];
-      // if (timestamp < currentTime) {
       var marginalOffer = await poolmarketContractRead.getMarginalOffer(timestamp);
       var price = convertBigNumberToNumber(marginalOffer.price);
       var volume = convertBigNumberToNumber(marginalOffer.amount);
@@ -49,46 +75,65 @@ const SMPTable = () => {
       var minutes = dateObj.getMinutes();
       const hour = dateObj.getHours();
       index += 1;
-      smps.push(createData(index,
+      smps.push(createData(
                           `${he} ${hour+1}`, 
                           `${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}`,
                           price,
                           volume));
-      // }
     }
-    console.log('SMP table content: ', smps);
     return smps;
   }
 
-  return ( 
-    <TableContainer component={Paper}>
-      <Typography variant='h6' alignContent='center' textAlign='center' margin='1rem'>System Marginal Price</Typography>
-      <Table sx={{ minWidth: 410 }} size="small" aria-label="a dense table">
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Date&nbsp;(HE)</TableCell>
-            <TableCell align="center">Time</TableCell>
-            <TableCell align="center">Price&nbsp;($)</TableCell>
-            <TableCell align="center">Volume&nbsp;(MW)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell align="center">{row.id}</TableCell>
-              <TableCell component="th" scope="row">{row.dateHe}</TableCell>
-              <TableCell align="center">{row.time}</TableCell>
-              <TableCell align="center">{row.price}</TableCell>
-              <TableCell align="center">{row.volume}</TableCell>
+  return (
+    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Typography variant='h6' alignContent='center' textAlign='center' margin='1rem'>System Marginal Price</Typography>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => {
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                    {columns.map((column) => {
+                      const value = row[column.id];
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format && typeof value === 'number'
+                            ? column.format(value)
+                            : value}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component="div"
+        count={rows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
   );
 }
 
