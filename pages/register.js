@@ -30,7 +30,7 @@ const Register = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer, ticketCategories } = state;
-  const [usertype, setUsertype] = useState('');
+  const [usertype, setUsertype] = useState('Supplier');
   const [assetId, setAssetId] = useState('');
   const [capacityOrLoad, setCapacityOrLoad] = useState(0);
   const [blockAmount, setBlockAmount] = useState(0);
@@ -42,7 +42,7 @@ const Register = () => {
     if (account.length === 0) return
     const checkRegistered = async () => {
       const _isRegisteredSupplier = await registryContractRead.isRegisteredSupplier(account);
-      const _isRegisteredConsumer = await registryContractRead.isRegisteredSupplier(account);
+      const _isRegisteredConsumer = await registryContractRead.isRegisteredConsumer(account);
       if (_isRegisteredSupplier) {
         const registeredSupplier = await registryContractRead.getSupplier(account);
         setAssetId(registeredSupplier.assetId);
@@ -102,19 +102,16 @@ const Register = () => {
       enqueueSnackbar("You must login Metamask to continue", { variant: 'info', preventDuplicate: true});
       return
     }
-    // console.log('Registry Input Data: ', registryData);
     const register = async (usertype, registryData) => {
       // validate signature
       enqueueSnackbar(`You are registering ${registryData.assetID}, waiting for confirmation...`, { variant: 'success' });
       await registerUser(usertype, registryData);
       enqueueSnackbar("User registered successfully!", { variant: 'success', preventDuplicate: true});
       if (usertype === 'Supplier') {
-        const registeredSupplier = await registryContractRead.getSupplier(signer.getAddress());
-        // console.log('Registered supplier: ', registeredSupplier);
+        // const registeredSupplier = await registryContractRead.getSupplier(signer.getAddress());
         setIsRegisteredSupplier(true);
       } else if (usertype === 'consumer') {
-        const registeredConsumer = await registryContractRead.getConsumer(signer.getAddress());
-        // console.log('Registered consumer: ', registeredConsumer);
+        // const registeredConsumer = await registryContractRead.getConsumer(signer.getAddress());
         setIsRegisteredConsumer(true);
       }
       
@@ -198,21 +195,21 @@ const Register = () => {
                   required
                   fullWidth
                   id="capacityOrLoad"
-                  label={(isRegisteredSupplier || isRegisteredConsumer) ? capacityOrLoad : "Capacity or Load"}
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? capacityOrLoad : (usertype == 'Supplier') ? 'Capacity' : 'Load'}
                   name="capacityOrLoad"
                   autoComplete="capacityOrLoad"
                   disabled={isRegisteredSupplier || isRegisteredConsumer}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} style={ (isRegisteredSupplier || usertype == 'Supplier') ? { display: "block" } : { display: "none" }}>
                 <TextField
+                  required
                   fullWidth
                   id="blockAmount"
-                  label={(isRegisteredSupplier || isRegisteredConsumer) ? blockAmount : "Block Amount (Optional)"}
+                  label={(isRegisteredSupplier || isRegisteredConsumer) ? blockAmount : "Block Amount"}
                   name="blockAmount"
                   autoComplete="blockAmount"
-                  disabled={isRegisteredSupplier || isRegisteredConsumer}
-                />
+                  disabled={isRegisteredSupplier || isRegisteredConsumer}                />
               </Grid>
               <Grid item xs={12}>
                 <TextField
