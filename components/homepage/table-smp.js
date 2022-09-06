@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box, Paper, Table, Card } from '@mui/material';
+import { Typography, Paper, Table } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
@@ -9,8 +9,6 @@ import TablePagination from '@mui/material/TablePagination';
 import { convertBigNumberToNumber } from 'utils/tools';
 import {
   poolmarketContractRead,
-  tokenContractRead,
-  defaultProvider
 } from 'utils/const';
 
 const columns = [
@@ -38,7 +36,7 @@ function createData( dateHe, time, price, volume ) {
 }
 
 const SMPTable = () => {
-  const [rows, setRows] = useState([]);
+  const [marginalPriceRows, setMarginalPriceRows] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -54,7 +52,7 @@ const SMPTable = () => {
   useEffect(() => {
     const updateTable = async () => {
       const smps = await getsmp();
-      setRows(smps);
+      setMarginalPriceRows(smps);
     }
     updateTable();
   }, []);
@@ -63,18 +61,15 @@ const SMPTable = () => {
   const getsmp = async () => {
     const totalDemandMinutes = await poolmarketContractRead.getTotalDemandMinutes();
     const smps = [];
-    var index = 0;
-    for (let i=0; i<totalDemandMinutes.length; i++) {
+    for (let i=totalDemandMinutes.length-1; i>=0; i--) {
       var timestamp = totalDemandMinutes[i];
       var marginalOffer = await poolmarketContractRead.getMarginalOffer(timestamp);
       var price = convertBigNumberToNumber(marginalOffer.price);
       var volume = convertBigNumberToNumber(marginalOffer.amount);
-
       var dateObj = new Date(timestamp * 1000);
       var he = dateObj.toLocaleDateString("en-us");
       var minutes = dateObj.getMinutes();
       const hour = dateObj.getHours();
-      index += 1;
       smps.push(createData(
                           `${he} ${hour+1}`, 
                           `${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}`,
@@ -103,11 +98,11 @@ const SMPTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {marginalPriceRows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
+              .map((row, index) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.dateHe + row.time + index}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -127,7 +122,7 @@ const SMPTable = () => {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={marginalPriceRows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

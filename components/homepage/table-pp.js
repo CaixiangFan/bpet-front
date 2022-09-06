@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Typography from '@mui/material/Typography';
@@ -8,17 +8,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { convertBigNumberToNumber } from 'utils/tools';
+import { poolmarketContractRead } from 'utils/const';
 
 const columns = [
   { id: 'dateHe', label: 'Date (HE)', minWidth: 150, align: 'center', format: (value) => value.toLocaleString('en-US')},
   { id: 'price', label: 'Price ($)', minWidth: 100,  align: 'center', format: (value) => value.toLocaleString('en-US')},
-  {
-    id: 'ravg',
-    label: '30Ravg($)',
-    minWidth: 60,
-    align: 'center',
-    format: (value) => value.toLocaleString('en-US'),
-  },
   {
     id: 'ail',
     label: 'AIL Demand (MW)',
@@ -28,37 +23,19 @@ const columns = [
   }
 ];
 
-function createData( dateHe, price, ravg, ail ) {
-  return { dateHe, price, ravg, ail };
+function createSMPData( dateHe, time, price, volume ) {
+  return { dateHe, time, price, volume };
 }
 
-const rows = [
-  createData('08/10/2022 21',	621.19,	162.13,	10273.0),
-  createData('08/10/2022 20',	776.17,	162.13,	10384.0),
-  createData('08/10/2022 19',	800.80,	161.53,	10522.0),
-  createData('08/10/2022 18',	834.37,	161.36,	10648.0),
-  createData('08/10/2022 17',	805.46,	161.33,	10651.0),
-  createData('08/10/2022 16',	801.27,	161.37,	10596.0),
-  createData('08/10/2022 15',	802.64,	161.07,	10448.0),
-  createData('08/10/2022 14',	820.96,	160.28,	10406.0),
-  createData('08/10/2022 13',	820.03,	159.39,	10302.0),
-  createData('08/10/2022 12',	576.32,	158.66,	10246.0),
-  createData('08/10/2022 11',	125.67,	158.00,	10163.0),
-  createData('08/10/2022 10',	421.80,	157.95,	9962.0),
-  createData('08/10/2022 09',	78.89, 157.48, 9836.0),
-  createData('08/10/2022 08',	60.28, 157.46, 9561.0),
-  createData('08/10/2022 07',	58.72, 157.45, 9273.0),
-  createData('08/10/2022 06',	52.63, 157.43, 9125.0),
-  createData('08/10/2022 05',	53.51, 157.42, 9034.0),
-  createData('08/10/2022 04',	54.24, 157.40, 9058.0),
-  createData('08/10/2022 03',	52.03, 157.38, 9126.0),
-  createData('08/10/2022 02',	51.88, 157.37, 9254.0),
-  createData('08/10/2022 01',	48.99, 157.36, 9413.0),
-];
+function createData( dateHe, price, ail ) {
+  return { dateHe, price, ail };
+}
 
-export default function StickyHeadTable() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+const PPTable = () => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rows, setRows] = useState([]);
+  // const [marginalPriceRows, setMarginalPriceRows] = useState();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -68,6 +45,93 @@ export default function StickyHeadTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  useEffect(() => {
+    const updateTable = async () => {
+      const poolprices = await getPoolprice();
+      setRows(poolprices);
+    }
+    updateTable();
+  }, []);
+
+  const getsmp = async () => {
+    const totalDemandMinutes = await poolmarketContractRead.getTotalDemandMinutes();
+    const smps = [];
+    for (let i=totalDemandMinutes.length-1; i>=0; i--) {
+      var timestamp = totalDemandMinutes[i];
+      var marginalOffer = await poolmarketContractRead.getMarginalOffer(timestamp);
+      var price = convertBigNumberToNumber(marginalOffer.price);
+      var volume = convertBigNumberToNumber(marginalOffer.amount);
+      var dateObj = new Date(timestamp * 1000);
+      var he = dateObj.toLocaleDateString("en-us");
+      var minutes = dateObj.getMinutes();
+      const hour = dateObj.getHours();
+      smps.push(createSMPData(
+                          `${he} ${hour+1}`, 
+                          `${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}`,
+                          price,
+                          volume));
+    }
+    return smps;
+  }
+
+  const getPoolprice = async () => {
+    // loop to change to two dimentional array based on dateHE
+    const uniqueDateheRows = [];
+    const marginalPriceRows = await getsmp();
+    try {
+      // console.log(marginalPriceRows[0]);
+      var currentDatehe = marginalPriceRows[0].dateHe;
+      var currentDateheRows = [];
+      for (let i=0; i<marginalPriceRows.length; i++) {
+        if (marginalPriceRows[i].dateHe == currentDatehe) {
+          currentDateheRows.push(marginalPriceRows[i]);
+        } else {
+          uniqueDateheRows.push(currentDateheRows);
+          currentDateheRows = [];
+          currentDateheRows.push(marginalPriceRows[i]);
+          currentDatehe = marginalPriceRows[i].dateHe;
+        }
+        if (i == marginalPriceRows.length - 1) {
+          uniqueDateheRows.push(currentDateheRows);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    const poolprices = [];
+    for (let i=0; i<uniqueDateheRows.length; i++) {
+      var price = 0;
+      if (uniqueDateheRows[i].length === 1) {
+        price = Number(uniqueDateheRows[i][0].price);
+      } else {
+        var cumulativePrice = 0;
+        var duration = 0;
+        var length = uniqueDateheRows[i].length;
+        for (let j=0; j<length; j++) {
+          if (j === length - 1) {
+            duration = 60 - Number(uniqueDateheRows[i][j].time.split(':')[1]);
+          } else if (j === 0){
+            duration = Number(uniqueDateheRows[i][j+1].time.split(':')[1]);
+          } else {
+            duration = Number(uniqueDateheRows[i][j+1].time.split(':')[1]) - Number(uniqueDateheRows[i][j].time.split(':')[1]);
+          }
+          cumulativePrice += Number(uniqueDateheRows[i][j].price) * duration;
+        }
+        price = Math.round(cumulativePrice / 60);
+      }
+      var dateHe = uniqueDateheRows[i][0].dateHe;
+      var time = uniqueDateheRows[i][0].time;
+      var timestamp = Math.floor(new Date(`${dateHe.split(' ')[0]} ${time}`).getTime() / 1000);
+      var totalDemand = convertBigNumberToNumber(await poolmarketContractRead.totalDemands(timestamp));
+      poolprices.push(createData(
+                    dateHe, 
+                    price,
+                    totalDemand));
+    }
+    return poolprices;
+  }
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -92,11 +156,11 @@ export default function StickyHeadTable() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.dateHe}>
+                    {columns.map((column, index) => {
                       const value = row[column.id];
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell key={index} align={column.align}>
                           {column.format && typeof value === 'number'
                             ? column.format(value)
                             : value}
@@ -121,3 +185,4 @@ export default function StickyHeadTable() {
     </Paper>
   );
 }
+export default PPTable

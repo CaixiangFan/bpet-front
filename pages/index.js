@@ -13,7 +13,6 @@ const Home = () => {
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
   const [loaded, setLoaded] = useState(false)
 
-
   useEffect(() => {
     const init = async () => {
       setLoaded(true)
@@ -36,7 +35,7 @@ const Home = () => {
               m: 1,
               maxWidth: '80vw',
               maxHeight: '80vh',
-              height: 200,
+              height: 180,
               width: 600,
             },
           }}
