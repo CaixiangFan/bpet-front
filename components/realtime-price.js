@@ -3,7 +3,6 @@ import { Typography, Box, Card } from '@mui/material';
 import { convertBigNumberToNumber } from 'utils/tools';
 import {
   poolmarketContractRead,
-  tokenContractRead,
   defaultProvider
 } from 'utils/const';
 
@@ -25,7 +24,6 @@ const PoolPrice = () => {
     var price = calculateProjectedPrice(_smps);
     console.log('smps: ', _smps);
     console.log('Current projected pool price', price);
-    // setSMPs(_smps);
     setProPrice(price);
   }
 
@@ -100,7 +98,11 @@ const PoolPrice = () => {
       var bid = await poolmarketContractRead.getEnergyBid(bidIds[i]);
       var submitTimeStamp = convertBigNumberToNumber(bid.submitMinute);
       var submitTime = new Date(submitTimeStamp * 1000);
-      bids.push({"submitAt": submitTime.toLocaleTimeString('en-us', options), bid});
+      bids.push({"submitAt": submitTime.toLocaleTimeString('en-us', options), 
+                "amount": convertBigNumberToNumber(bid.amount),
+                "price": convertBigNumberToNumber(bid.price),
+                "submitMinute": convertBigNumberToNumber(bid.submitMinute),
+                "consumerAccount": bid.consumerAccount});
     }
     console.log('All valid bids: ', bids);
   }
@@ -116,7 +118,6 @@ const PoolPrice = () => {
     getOffers();
     getBids();
     getDispatchedOffers();
-    // getsmp();
     updatePrice();
     const interval = setInterval(() => updatePrice(), 50000);
     return () => {
