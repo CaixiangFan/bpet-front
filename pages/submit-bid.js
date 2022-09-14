@@ -177,7 +177,7 @@ const SubmitBid = () => {
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                  label="I have read and understand the terms and conditions of the agreement to submit a bid."
                 />
               </Grid>
             </Grid>

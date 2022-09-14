@@ -48,7 +48,7 @@ const supplierColumns = [
   {
     field: 'assetId',
     headerName: 'Asset ID',
-    width: 90,
+    width: 100,
     editable: false,
   },
   {
@@ -68,7 +68,7 @@ const supplierColumns = [
     field: 'capacity',
     headerName: 'Capacity',
     type: 'number',
-    width: 90,
+    width: 100,
     editable: false,
   },
   {
@@ -90,7 +90,7 @@ const consumerColumns = [
   {
     field: 'assetId',
     headerName: 'Asset ID',
-    width: 90,
+    width: 100,
     editable: false,
   },
   {
@@ -118,9 +118,6 @@ const computeMutation = (newRow, oldRow) => {
   if (newRow.allowance !== oldRow.allowance) {
     return `Allowance from '${oldRow.allowance}' to '${newRow.allowance}'`;
   }
-  // if (newRow.age !== oldRow.age) {
-  //   return `Age from '${oldRow.age || ''}' to '${newRow.age || ''}'`;
-  // }
   return null;
 }
 
@@ -356,6 +353,13 @@ const Admin = () => {
     setSnackbar({ children: error.message, severity: 'error' });
   }, []);
 
+  const handleEntered = () => {
+    // The `autoFocus` is not used because, if used, the same Enter that saves
+    // the cell triggers "No". Instead, we manually focus the "No" button once
+    // the dialog is fully open.
+    // noButtonRef.current?.focus();
+  };
+
   const renderConfirmDialog = () => {
     if (!promiseArguments) {
       return null;
@@ -474,7 +478,7 @@ const Admin = () => {
             maxWidth: '80vw',
             maxHeight: '80vh',
             height: 600,
-            width: 700,
+            width: 800,
           },
         }}
       >
