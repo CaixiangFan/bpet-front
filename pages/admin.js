@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-// import axios from 'axios';
+import { convertBigNumberToNumber } from 'utils/tools';
 import { ethers } from 'ethers';
 import {
   Avatar,
@@ -169,9 +169,8 @@ const Admin = () => {
 
   const updateBalance = async () => {
     const tokenBalance = await tokenContractRead.balanceOf(account);
-    const decimals = await tokenContractRead.decimals();
-
-    setETKBalance(ethers.utils.formatEther(tokenBalance) * 10 ** decimals);
+    const balance = convertBigNumberToNumber(tokenBalance);
+    setETKBalance(balance);
   }
   
   const handleUserTypeSelectChange = (event) => {

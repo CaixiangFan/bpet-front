@@ -11,6 +11,7 @@ import {
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";
+import { convertBigNumberToNumber } from "utils/tools";
 import {
     Avatar,
     Button,
@@ -60,8 +61,8 @@ const BuyETK = () => {
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);
       const _etkBalance = await tokenContractRead.balanceOf(account);
-      const _decimals = await tokenContractRead.decimals();
-      setETKBalance(ethers.utils.formatEther(_etkBalance) * 10 ** _decimals);
+      const balance = convertBigNumberToNumber(_etkBalance);
+      setETKBalance(balance);
     }
     checkRegistered();
   }, [account])
@@ -107,8 +108,8 @@ const BuyETK = () => {
         await buyETK(amount);
         enqueueSnackbar("You bought tokens successfully!", { variant: 'success', preventDuplicate: true});
         const _etkBalance = await tokenContractRead.balanceOf(account);
-        const _decimals = await tokenContractRead.decimals();
-        setETKBalance(ethers.utils.formatEther(_etkBalance) * 10 ** _decimals);
+        const balance = convertBigNumberToNumber(_etkBalance);
+        setETKBalance(balance);
       }
       buyToken(etkData.amount);
     }
@@ -118,8 +119,8 @@ const BuyETK = () => {
         await redeemETK(amount);
         enqueueSnackbar("You burned tokens successfully!", { variant: 'success', preventDuplicate: true});
         const _etkBalance = await tokenContractRead.balanceOf(account);
-        const _decimals = await tokenContractRead.decimals();
-        setETKBalance(ethers.utils.formatEther(_etkBalance) * 10 ** _decimals);
+        const balance = convertBigNumberToNumber(_etkBalance);
+        setETKBalance(balance);
       }
       redeemToken(etkData.amount);
     }

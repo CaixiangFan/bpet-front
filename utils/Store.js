@@ -5,7 +5,6 @@ const initialState = {
   adminAddress: '',
   correctNetworkConnected: false,
   account: '',
-  ticketCategories: [],
   provider: null,
   signer: null,
 }
