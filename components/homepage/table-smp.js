@@ -59,22 +59,26 @@ const SMPTable = () => {
 
   //get all smps in the past
   const getsmp = async () => {
-    const totalDemandMinutes = await poolmarketContractRead.getTotalDemandMinutes();
     const smps = [];
-    for (let i=totalDemandMinutes.length-1; i>=0; i--) {
-      var timestamp = totalDemandMinutes[i];
-      var marginalOffer = await poolmarketContractRead.getMarginalOffer(timestamp);
-      var price = convertBigNumberToNumber(marginalOffer.price);
-      var volume = convertBigNumberToNumber(marginalOffer.amount);
-      var dateObj = new Date(timestamp * 1000);
-      var he = dateObj.toLocaleDateString("en-us");
-      var minutes = dateObj.getMinutes();
-      const hour = dateObj.getHours();
-      smps.push(createData(
-                          `${he} ${hour+1}`, 
-                          `${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}`,
-                          price,
-                          volume));
+    try {
+      const totalDemandMinutes = await poolmarketContractRead.getTotalDemandMinutes();
+      for (let i=totalDemandMinutes.length-1; i>=0; i--) {
+        var timestamp = totalDemandMinutes[i];
+        var marginalOffer = await poolmarketContractRead.getMarginalOffer(timestamp);
+        var price = convertBigNumberToNumber(marginalOffer.price);
+        var volume = convertBigNumberToNumber(marginalOffer.amount);
+        var dateObj = new Date(timestamp * 1000);
+        var he = dateObj.toLocaleDateString("en-us");
+        var minutes = dateObj.getMinutes();
+        const hour = dateObj.getHours();
+        smps.push(createData(
+                            `${he} ${hour+1}`, 
+                            `${hour < 10 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}`,
+                            price,
+                            volume));
+      }
+    } catch(error) {
+      console.log(error);
     }
     return smps;
   }

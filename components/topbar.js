@@ -18,7 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useSnackbar } from 'notistack';
 import { Store } from "utils/Store";
-import { REGISTRY_CONTRACT_ADDRESS, registryContractRead, defaultNetworkId, defaultProvider, besuChainConfig } from 'utils/const'
+import { REGISTRY_CONTRACT_ADDRESS, registryContractRead, defaultNetworkId, defaultProvider, chainConfig } from 'utils/const'
 // import abi from 'utils/contracts/abi.json';
 
 const pages = ['I\'m Admin', 'Register', 'Buy ETK', 'Submit Offer', 'Submit Bid'];
@@ -92,7 +92,7 @@ const ResponsiveAppBar = () => {
         // switch network
         window.ethereum.request({
           method: 'wallet_addEthereumChain',
-          params: besuChainConfig,
+          params: chainConfig,
         });
       } else {
         dispatch({ type: 'UPDATE_CORRECT_NETWORK_CONNECTED', payload: true });
@@ -135,7 +135,7 @@ const ResponsiveAppBar = () => {
     // unlock wallet
     const init = async () => {
       // await updateAllTicketInfo()
-      const _adminAddress = await registryContractRead.owner()
+      const _adminAddress = await registryContractRead.owner();
       // console.log('Registry owner: ', _adminAddress);
 
       dispatch({ type: 'UPDATE_ADMIN_ADDRESS', payload: _adminAddress });

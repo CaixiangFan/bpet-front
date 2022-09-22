@@ -38,6 +38,7 @@ const BuyETK = () => {
   const [usertype, setUsertype] = useState('');
   const [assetId, setAssetId] = useState('');
   const [etkBalance, setETKBalance] = useState(0);
+  const [allowance, setAllowance] = useState(0);
   const [actionType, setActionType] = useState('buyETK');
   const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
   const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
@@ -62,6 +63,9 @@ const BuyETK = () => {
       setIsRegisteredConsumer(_isRegisteredConsumer);
       const _etkBalance = await tokenContractRead.balanceOf(account);
       const balance = convertBigNumberToNumber(_etkBalance);
+      const _adminAddress = await registryContractRead.owner();
+      const allowance = await tokenContractRead.allowance(_adminAddress, account);
+      setAllowance(convertBigNumberToNumber(allowance));
       setETKBalance(balance);
     }
     checkRegistered();
@@ -149,6 +153,17 @@ const BuyETK = () => {
     }
   }
 
+  const getAmountLabel = () => {
+    var label = "Amount";
+    if ((isRegisteredConsumer || isRegisteredSupplier)) {
+      if (actionType === 'buyETK') {
+        label = allowance > 0 ? `Amount 0 ~ ${allowance}` : 'Amount 0';
+      } else if (actionType === 'redeemETK') {
+        label = etkBalance > 0 ? `Amount 0 ~ ${etkBalance}` : 'Amount 0';
+      }
+    } 
+    return label;
+  }
   return <Layout title='BuyETK'>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -221,7 +236,7 @@ const BuyETK = () => {
                 <TextField                 
                   fullWidth
                   id="amount"
-                  label="Amount"
+                  label={getAmountLabel()}
                   name="amount"
                   autoComplete="amount"
                   autoFocus

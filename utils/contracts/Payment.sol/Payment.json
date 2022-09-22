@@ -13,7 +13,7 @@
       },
       {
         "internalType": "address",
-        "name": "_REGISTRY_CONTRACT_ADDRESS",
+        "name": "_registryContractAddress",
         "type": "address"
       }
     ],
@@ -116,7 +116,7 @@
   },
   {
     "inputs": [],
-    "name": "poolmarketContractRead",
+    "name": "poolMarketContract",
     "outputs": [
       {
         "internalType": "contract IPoolMarket",
@@ -129,7 +129,7 @@
   },
   {
     "inputs": [],
-    "name": "registryContractRead",
+    "name": "registryContract",
     "outputs": [
       {
         "internalType": "contract IRegistry",

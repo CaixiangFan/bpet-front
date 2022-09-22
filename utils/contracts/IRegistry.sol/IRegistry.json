@@ -42,6 +42,11 @@
         {
           "components": [
             {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
               "internalType": "string",
               "name": "assetId",
               "type": "string"
@@ -77,6 +82,11 @@
       "outputs": [
         {
           "components": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
             {
               "internalType": "string",
               "name": "assetId",
@@ -120,7 +130,13 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
       "name": "isRegisteredConsumer",
       "outputs": [
         {

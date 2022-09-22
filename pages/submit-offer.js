@@ -6,7 +6,7 @@ import {
   registryContractRead, 
   REGISTRY_CONTRACT_ADDRESS,
   poolmarketContractRead,
-  POOLMARKET_CONTRACT_ADDRESS
+  POOLMARKET_CONTRACT_ADDRESS,
 } from 'utils/const';
 import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
@@ -127,7 +127,7 @@ const SubmitOffer = () => {
         data.assetID,
         Number(data.blockNumber),
         Number(data.energyAmount),
-        Number(data.price)
+        Number(data.price),
       );
     } catch (err) {
       console.log(err);

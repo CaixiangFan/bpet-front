@@ -77,41 +77,55 @@ const PoolPrice = () => {
   }
 
   const getOffers = async () => {
-    const offerIds = await poolmarketContractRead.getValidOfferIDs();
-    var offers = [];
-    for (let i=0; i<offerIds.length; i++) {
-      var offer = await poolmarketContractRead.getEnergyOffer(offerIds[i]);
-      var amount = convertBigNumberToNumber(offer.amount);
-      var price = convertBigNumberToNumber(offer.price);
-      var submitMinute = convertBigNumberToNumber(offer.submitMinute);
-      var supplierAccount = offer.supplierAccount;
-      var isValid = offer.isValid;
-      offers.push({amount, price, submitMinute, supplierAccount, isValid});
+    try {
+      const offerIds = await poolmarketContractRead.getValidOfferIDs();
+      var offers = [];
+      for (let i=0; i<offerIds.length; i++) {
+        var offer = await poolmarketContractRead.getEnergyOffer(offerIds[i]);
+        var amount = convertBigNumberToNumber(offer.amount);
+        var price = convertBigNumberToNumber(offer.price);
+        var submitMinute = convertBigNumberToNumber(offer.submitMinute);
+        var supplierAccount = offer.supplierAccount;
+        var isValid = offer.isValid;
+        offers.push({amount, price, submitMinute, supplierAccount, isValid});
+      }
+      console.log('All valid offers: ', offers);
+    } catch(error) {
+      console.log(error);
     }
-    console.log('All valid offers: ', offers);
   }
 
   const getBids = async () => {
-    const bidIds = await poolmarketContractRead.getValidBidIDs();
-    var bids = [];
-    for (let i=0; i<bidIds.length; i++) {
-      var bid = await poolmarketContractRead.getEnergyBid(bidIds[i]);
-      var submitTimeStamp = convertBigNumberToNumber(bid.submitMinute);
-      var submitTime = new Date(submitTimeStamp * 1000);
-      bids.push({"submitAt": submitTime.toLocaleTimeString('en-us', options), 
-                "amount": convertBigNumberToNumber(bid.amount),
-                "price": convertBigNumberToNumber(bid.price),
-                "submitMinute": convertBigNumberToNumber(bid.submitMinute),
-                "consumerAccount": bid.consumerAccount});
+    try {
+      console.log('call getValidBidsIDs ...');
+      const bidIds = await poolmarketContractRead.getValidBidIDs();
+      console.log('Valid bid IDs: ', bidIds);
+      var bids = [];
+      for (let i=0; i<bidIds.length; i++) {
+        var bid = await poolmarketContractRead.getEnergyBid(bidIds[i]);
+        var submitTimeStamp = convertBigNumberToNumber(bid.submitMinute);
+        var submitTime = new Date(submitTimeStamp * 1000);
+        bids.push({"submitAt": submitTime.toLocaleTimeString('en-us', options), 
+                  "amount": convertBigNumberToNumber(bid.amount),
+                  "price": convertBigNumberToNumber(bid.price),
+                  "submitMinute": convertBigNumberToNumber(bid.submitMinute),
+                  "consumerAccount": bid.consumerAccount});
+      }
+      console.log('All valid bids: ', bids);
+    } catch(error) {
+      console.log(error);
     }
-    console.log('All valid bids: ', bids);
   }
 
   const getDispatchedOffers = async () => {
-    const currBlock = await defaultProvider.getBlock("latest");
-    const currHour = Math.floor(currBlock.timestamp / 3600) * 3600;
-    const dispatchedOffers = await poolmarketContractRead.getDispatchedOffers(currHour);
-    console.log('Dispatched offers: ', dispatchedOffers);
+    try {
+      const currBlock = await defaultProvider.getBlock("latest");
+      const currHour = Math.floor(currBlock.timestamp / 3600) * 3600;
+      const dispatchedOffers = await poolmarketContractRead.getDispatchedOffers(currHour);
+      console.log('Dispatched offers: ', dispatchedOffers);
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {
