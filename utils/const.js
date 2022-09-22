@@ -4,8 +4,8 @@ import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
 import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json';
 import paymentAbi from 'utils/contracts/Payment.sol/Payment.json';
 
-// const backendUrl = 'http://localhost:3000/'
-const backendUrl = 'https://nfticket.herokuapp.com/'
+const backendUrl = 'http://localhost:3000/'
+// const backendUrl = 'https://nfticket.herokuapp.com/'
 // RPC URL -- replaced with bsctestnet
 // const besuRpcUrl = 'http://192.168.226.67:8545';
 // const defaultProvider = new ethers.providers.JsonRpcProvider(besuRpcUrl);

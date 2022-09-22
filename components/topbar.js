@@ -134,7 +134,6 @@ const ResponsiveAppBar = () => {
   useEffect(() => {
     // unlock wallet
     const init = async () => {
-      // await updateAllTicketInfo()
       const _adminAddress = await registryContractRead.owner()
       // console.log('Registry owner: ', _adminAddress);
 
@@ -262,5 +261,4 @@ const ResponsiveAppBar = () => {
     </AppBar>
   );
 };
-// export default ResponsiveAppBar;
 export default dynamic(() => Promise.resolve(ResponsiveAppBar), { ssr: false });

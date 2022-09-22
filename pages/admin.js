@@ -29,6 +29,7 @@ import { useSnackbar } from 'notistack';
 import Layout from 'components/layout'
 import { DataGrid } from '@mui/x-data-grid';
 import {
+  backendUrl,
   registryContractRead, 
   REGISTRY_CONTRACT_ADDRESS,
   tokenContractRead,
@@ -36,6 +37,7 @@ import {
 } from 'utils/const';
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
 import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
+import axios from 'axios';
 
 const supplierColumns = [
   { field: 'id', headerName: 'ID', width: 50 },
@@ -168,9 +170,10 @@ const Admin = () => {
   const handleCloseSnackbar = () => setSnackbar(null);
 
   const updateBalance = async () => {
-    const tokenBalance = await tokenContractRead.balanceOf(account);
-    const balance = convertBigNumberToNumber(tokenBalance);
-    setETKBalance(balance);
+    // const tokenBalance = await tokenContractRead.balanceOf(account);
+    const response = await axios.get(`${backendUrl}admin/balance/${account}`);
+    // const balance = convertBigNumberToNumber(tokenBalance);
+    setETKBalance(response.data);
   }
   
   const handleUserTypeSelectChange = (event) => {
