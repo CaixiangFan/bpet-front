@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import {
   registryContractRead, 
-  REGISTRY_CONTRACT_ADDRESS,
+  backendUrl,
   tokenContractRead,
   TOKEN_CONTRACT_ADDRESS
 } from 'utils/const';
@@ -29,7 +29,7 @@ import {
     Grid,
     Box
   } from '@mui/material';
-
+import axios from 'axios';
 
 const BuyETK = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -45,22 +45,27 @@ const BuyETK = () => {
   useEffect(() => {
     if (account.length === 0) return
     const checkRegistered = async () => {
-      const _isRegisteredSupplier = await registryContractRead.isRegisteredSupplier(account);
-      const _isRegisteredConsumer = await registryContractRead.isRegisteredConsumer(account);
+      const resIsRegisteredSupplier = await axios.get(`${backendUrl}registry/isregisteredsupplier/${account}`);
+      const resIsRegisteredConsumer = await axios.get(`${backendUrl}registry/isregisteredconsumer/${account}`);
+      const _isRegisteredSupplier = resIsRegisteredSupplier.data;
+      const _isRegisteredConsumer = resIsRegisteredConsumer.data;
       if (_isRegisteredSupplier) {
-        const registeredSupplier = await registryContractRead.getSupplier(account);
-        setAssetId(registeredSupplier.assetId);
+        const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
+        const registeredSupplier = resRegisteredSupplier.data;
+        setAssetId(registeredSupplier[1]);
         setUsertype("Supplier");
       } else if (_isRegisteredConsumer) {
-        const registeredConsumer = await registryContractRead.getConsumer(account);
-        setAssetId(registeredConsumer.assetId);
+        const resRegisteredConsumer = await axios.get(`${backendUrl}registry/getconsumer/${account}`);
+        const registeredConsumer = resRegisteredConsumer.data;
+        setAssetId(registeredConsumer[1]);
         setUsertype("Consumer");
       } else {
         enqueueSnackbar('This account has not been registered!', { variant: 'info', preventDuplicate: true });
       }
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);
-      const _etkBalance = await tokenContractRead.balanceOf(account);
+      const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
+      const _etkBalance = resEtkBalance.data;
       const balance = convertBigNumberToNumber(_etkBalance);
       setETKBalance(balance);
     }
@@ -107,9 +112,10 @@ const BuyETK = () => {
       const buyToken = async (amount) => {
         await buyETK(amount);
         enqueueSnackbar("You bought tokens successfully!", { variant: 'success', preventDuplicate: true});
-        const _etkBalance = await tokenContractRead.balanceOf(account);
-        const balance = convertBigNumberToNumber(_etkBalance);
-        setETKBalance(balance);
+        const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
+        const _etkBalance = resEtkBalance.data;
+        // const balance = convertBigNumberToNumber(_etkBalance);
+        setETKBalance(_etkBalance);
       }
       buyToken(etkData.amount);
     }
@@ -118,9 +124,10 @@ const BuyETK = () => {
       const redeemToken = async (amount) => {
         await redeemETK(amount);
         enqueueSnackbar("You burned tokens successfully!", { variant: 'success', preventDuplicate: true});
-        const _etkBalance = await tokenContractRead.balanceOf(account);
-        const balance = convertBigNumberToNumber(_etkBalance);
-        setETKBalance(balance);
+        const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
+        const _etkBalance = resEtkBalance.data;
+        // const balance = convertBigNumberToNumber(_etkBalance);
+        setETKBalance(_etkBalance);
       }
       redeemToken(etkData.amount);
     }

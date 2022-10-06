@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { convertBigNumberToNumber } from 'utils/tools';
 import { ethers } from 'ethers';
 import {
   Avatar,
@@ -30,9 +29,7 @@ import Layout from 'components/layout'
 import { DataGrid } from '@mui/x-data-grid';
 import {
   backendUrl,
-  registryContractRead, 
   REGISTRY_CONTRACT_ADDRESS,
-  tokenContractRead,
   TOKEN_CONTRACT_ADDRESS
 } from 'utils/const';
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
@@ -170,9 +167,7 @@ const Admin = () => {
   const handleCloseSnackbar = () => setSnackbar(null);
 
   const updateBalance = async () => {
-    // const tokenBalance = await tokenContractRead.balanceOf(account);
     const response = await axios.get(`${backendUrl}admin/balance/${account}`);
-    // const balance = convertBigNumberToNumber(tokenBalance);
     setETKBalance(response.data);
   }
   

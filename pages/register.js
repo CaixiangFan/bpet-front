@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import Layout from 'components/layout';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import {registryContractRead, REGISTRY_CONTRACT_ADDRESS} from 'utils/const';
+import {backendUrl, registryContractRead, REGISTRY_CONTRACT_ADDRESS} from 'utils/const';
 import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
 import { Store } from "utils/Store";
 import {
@@ -23,10 +23,10 @@ import {
     Box
   } from '@mui/material';
   import { useSnackbar, closeSnackbar } from 'notistack';
+  import axios from 'axios';
 
 
 const Register = () => {
-  // const router = useRouter()
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer, ticketCategories } = state;
@@ -41,21 +41,25 @@ const Register = () => {
   useEffect(() => {
     if (account.length === 0) return
     const checkRegistered = async () => {
-      const _isRegisteredSupplier = await registryContractRead.isRegisteredSupplier(account);
-      const _isRegisteredConsumer = await registryContractRead.isRegisteredConsumer(account);
+      const resIsRegisteredSupplier = await axios.get(`${backendUrl}registry/isregisteredsupplier/${account}`);
+      const resIsRegisteredConsumer = await axios.get(`${backendUrl}registry/isregisteredconsumer/${account}`);
+      const _isRegisteredSupplier = resIsRegisteredSupplier.data;
+      const _isRegisteredConsumer = resIsRegisteredConsumer.data;
       if (_isRegisteredSupplier) {
-        const registeredSupplier = await registryContractRead.getSupplier(account);
-        setAssetId(registeredSupplier.assetId);
-        setCapacityOrLoad(registeredSupplier.capacity);
+        const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
+        const registeredSupplier = resRegisteredSupplier.data;
+        setAssetId(registeredSupplier[1]);
+        setCapacityOrLoad(registeredSupplier[3]);
         setUsertype("Supplier");
-        setBlockAmount(registeredSupplier.blockAmount);
-        setOfferControl(registeredSupplier.offerControl);
+        setBlockAmount(registeredSupplier[2]);
+        setOfferControl(registeredSupplier[4]);
       } else if (_isRegisteredConsumer) {
-        const registeredConsumer = await registryContractRead.getConsumer(account);
-        setAssetId(registeredConsumer.assetId);
-        setCapacityOrLoad(registeredConsumer.load);
+        const resRegisteredConsumer = await axios.get(`${backendUrl}registry/getconsumer/${account}`);
+        const registeredConsumer = resRegisteredConsumer.data;
+        setAssetId(registeredConsumer[1]);
+        setCapacityOrLoad(registeredConsumer[2]);
         setUsertype("Consumer");
-        setOfferControl(registeredConsumer.offerControl);
+        setOfferControl(registeredConsumer[3]);
       }
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);
@@ -103,19 +107,15 @@ const Register = () => {
       return
     }
     const register = async (usertype, registryData) => {
-      // validate signature
+      // TODO: validate signature
       enqueueSnackbar(`You are registering ${registryData.assetID}, waiting for confirmation...`, { variant: 'success' });
       await registerUser(usertype, registryData);
       enqueueSnackbar("User registered successfully!", { variant: 'success', preventDuplicate: true});
       if (usertype === 'Supplier') {
-        // const registeredSupplier = await registryContractRead.getSupplier(signer.getAddress());
         setIsRegisteredSupplier(true);
       } else if (usertype === 'consumer') {
-        // const registeredConsumer = await registryContractRead.getConsumer(signer.getAddress());
         setIsRegisteredConsumer(true);
       }
-      
-
     }
     register(usertype, registryData);
   };
