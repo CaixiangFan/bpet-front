@@ -9,7 +9,6 @@ import {
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";
-import { convertBigNumberToNumber } from "utils/tools";
 import {
     Avatar,
     Button,
@@ -63,8 +62,7 @@ const BuyETK = () => {
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);
       const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
-      const _etkBalance = resEtkBalance.data;
-      const balance = convertBigNumberToNumber(_etkBalance);
+      const balance = resEtkBalance.data;
       setETKBalance(balance);
 
       const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
@@ -137,7 +135,6 @@ const BuyETK = () => {
 
   const buyETK = async (amount) => {
     try {
-      // const _adminAddress = await tokenContractRead.owner();
       const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
       const ownerAddress = ownerAddressRes.data;
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
@@ -150,7 +147,6 @@ const BuyETK = () => {
 
   const redeemETK = async (amount) => {
     try{
-      // const _adminAddress = await tokenContractRead.owner();
       const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
       const ownerAddress = ownerAddressRes.data;
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
