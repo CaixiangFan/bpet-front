@@ -267,10 +267,15 @@ const Admin = () => {
     try{
       if (userType === 'suppliers') {
         const registeredSuppliers = await registryContractWrite.getAllSuppliers();
+        // const registeredSuppliersRes = await axios.get(`${backendUrl}registry/getAllSuppliers`);
+        // const registeredSuppliers = registeredSuppliersRes.data;
         let suppliers = [];
         for (let i=0; i<registeredSuppliers.length; i++) {
+          // var supplierRes = await axios.get(`${backendUrl}registry/getsupplier/${registeredSuppliers[i]}`);
+          // var supplier = supplierRes.data;
           const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
           const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
+          console.log(`owner: ${adminAddress}, spender: ${registeredSuppliers[i]}`);
           suppliers.push({
             id: i+1, 
             account: supplier.account,
@@ -287,8 +292,8 @@ const Admin = () => {
         const registeredConsumers = await registryContractWrite.getAllConsumers();
         let consumers = [];
         for (let i=0; i<registeredConsumers.length; i++) {
-          const consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
-          const _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
+          var consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
+          var _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
           consumers.push({
             id: i+1, 
             account: consumer.account,

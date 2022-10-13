@@ -4,7 +4,6 @@ import { ethers } from "ethers";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import {
   backendUrl,
-  tokenContractRead,
   TOKEN_CONTRACT_ADDRESS
 } from 'utils/const';
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json'
@@ -24,7 +23,6 @@ import {
     Container,
     Typography,
     Checkbox,
-    Link,
     Grid,
     Box
   } from '@mui/material';
@@ -37,6 +35,7 @@ const BuyETK = () => {
   const [usertype, setUsertype] = useState('');
   const [assetId, setAssetId] = useState('');
   const [etkBalance, setETKBalance] = useState(0);
+  const [allowance, setAllowance] = useState(0);
   const [actionType, setActionType] = useState('buyETK');
   const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
   const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
@@ -67,6 +66,11 @@ const BuyETK = () => {
       const _etkBalance = resEtkBalance.data;
       const balance = convertBigNumberToNumber(_etkBalance);
       setETKBalance(balance);
+
+      const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
+      const allowanceRes = await axios.get(`${backendUrl}etk/allowance/${ownerAddressRes.data}/${account}`);
+      const allowance = allowanceRes.data;
+      setAllowance(allowance);
     }
     checkRegistered();
   }, [account])
@@ -133,10 +137,12 @@ const BuyETK = () => {
 
   const buyETK = async (amount) => {
     try {
-      const _adminAddress = await tokenContractRead.owner();
+      // const _adminAddress = await tokenContractRead.owner();
+      const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
+      const ownerAddress = ownerAddressRes.data;
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
       // Confirm receiving amount of fiat money from user before transfer the ETK
-      await tokenContractWrite.transferFrom(_adminAddress, account, amount);
+      await tokenContractWrite.transferFrom(ownerAddress, account, amount);
     } catch (err) {
       console.log(err);
     }
@@ -144,9 +150,11 @@ const BuyETK = () => {
 
   const redeemETK = async (amount) => {
     try{
-      const _adminAddress = await tokenContractRead.owner();
+      // const _adminAddress = await tokenContractRead.owner();
+      const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
+      const ownerAddress = ownerAddressRes.data;
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
-      await tokenContractWrite.transfer(_adminAddress, amount);
+      await tokenContractWrite.transfer(ownerAddress, amount);
       // Transfer amount of fiat money to user's account before burning the ETK
     } catch (err) {
       console.log(err);
@@ -225,7 +233,7 @@ const BuyETK = () => {
                 <TextField                 
                   fullWidth
                   id="amount"
-                  label="Amount"
+                  label={(actionType == 'buyETK' & allowance > 0) ? `0 ~ ${allowance}` : `0 ~ ${etkBalance}`}
                   name="amount"
                   autoComplete="amount"
                   autoFocus

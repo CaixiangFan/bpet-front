@@ -35,8 +35,9 @@ const SubmitOffer = () => {
   useEffect(() => {
     if (account.length === 0) return
     const checkRegistered = async () => {
-      const _isRegisteredSupplier = await axios.get(`${backendUrl}registry/isregisteredsupplier/${account}`);
-      if (_isRegisteredSupplier.data) {
+      const _isRegisteredSupplierRes = await axios.get(`${backendUrl}registry/isregisteredsupplier/${account}`);
+      const _isRegisteredSupplier = _isRegisteredSupplierRes.data;
+      if (_isRegisteredSupplier) {
         const registeredSupplierRes = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
         const registeredSupplier = registeredSupplierRes.data;
         const minmaxPricesRes = await axios.get(`${backendUrl}poolmarket/getMinMaxPrices`);
