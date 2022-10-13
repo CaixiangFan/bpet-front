@@ -54,10 +54,10 @@ if (chainId === 5) {
 }
 const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
 
-const registryContractRead = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, defaultProvider)
+// const registryContractRead = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, defaultProvider)
 const tokenContractRead = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, defaultProvider)
-const poolmarketContractRead = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi, defaultProvider)
-const paymentContractRead = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentAbi, defaultProvider)
+// const poolmarketContractRead = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi, defaultProvider)
+// const paymentContractRead = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentAbi, defaultProvider)
 
 const ipfsEndpoint = 'https://gateway.pinata.cloud/ipfs/';
 const GAS_LIMIT = 0.0075 * 10 ** chainConfig[0].nativeCurrency.decimals;
@@ -67,10 +67,10 @@ export {
   TOKEN_CONTRACT_ADDRESS,
   POOLMARKET_CONTRACT_ADDRESS,
   PAYMENT_CONTRACT_ADDRESS,
-  registryContractRead,
+  // registryContractRead,
   tokenContractRead,
-  poolmarketContractRead,
-  paymentContractRead,
+  // poolmarketContractRead,
+  // paymentContractRead,
   rpcUrl,
   backendUrl,
   defaultProvider,

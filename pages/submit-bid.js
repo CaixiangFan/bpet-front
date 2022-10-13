@@ -2,33 +2,23 @@ import React, { useContext, useState, useEffect } from 'react';
 import Layout from 'components/layout';
 import { ethers } from "ethers";
 import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
-import {
-  registryContractRead, 
-  REGISTRY_CONTRACT_ADDRESS,
-  poolmarketContractRead,
-  POOLMARKET_CONTRACT_ADDRESS
-} from 'utils/const';
+import { POOLMARKET_CONTRACT_ADDRESS, backendUrl } from 'utils/const';
 import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";
 import {
     Avatar,
     Button,
-    Select,
-    MenuItem,
-    FormControl,
     FormControlLabel,
-    InputLabel,
     TextField,
     CssBaseline,
     Container,
     Typography,
     Checkbox,
-    Link,
     Grid,
     Box
   } from '@mui/material';
-
+  import axios from "axios";
 
 const SubmitBid = () => {
 
@@ -45,16 +35,16 @@ const SubmitBid = () => {
   useEffect(() => {
     if (account.length === 0) return
     const checkRegistered = async () => {
-      const _isRegisteredConsumer = await registryContractRead.isRegisteredConsumer(account);
-      if (_isRegisteredConsumer) {
-        const registeredConsumer = await registryContractRead.getConsumer(account);
-        const _minPrice = await poolmarketContractRead.minAllowedPrice();
-        const _maxPrice = await poolmarketContractRead.maxAllowedPrice();
+      const _isRegisteredConsumer = await axios.get(`${backendUrl}registry/isregisteredconsumer/${account}`);
+      if (_isRegisteredConsumer.data) {
+        const registeredConsumerRes = await await axios.get(`${backendUrl}registry/getconsumer/${account}`);
+        const registeredConsumer = registeredConsumerRes.data;
+        const minmaxPricesRes = await axios.get(`${backendUrl}poolmarket/getMinMaxPrices`);
+        const minmaxPrices = minmaxPricesRes.data;
         setAssetId(registeredConsumer.assetId);
-        // setBlockAmount(registeredConsumer.blockAmount);
         setLoad(registeredConsumer.load);
-        setMinPrice(_minPrice);
-        setMaxPrice(_maxPrice);
+        setMinPrice(minmaxPrices.min);
+        setMaxPrice(minmaxPrices.max);
       } else {
         enqueueSnackbar('This account has not been registered as consumer!', { variant: 'info', preventDuplicate: true});
       }

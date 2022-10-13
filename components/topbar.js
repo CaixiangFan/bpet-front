@@ -18,8 +18,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useSnackbar } from 'notistack';
 import { Store } from "utils/Store";
-import { REGISTRY_CONTRACT_ADDRESS, registryContractRead, defaultNetworkId, defaultProvider, besuChainConfig } from 'utils/const'
-// import abi from 'utils/contracts/abi.json';
+import { defaultNetworkId, backendUrl, besuChainConfig } from 'utils/const';
+import axios from 'axios';
 
 const pages = ['I\'m Admin', 'Register', 'Buy ETK', 'Submit Offer', 'Submit Bid'];
 const pages_link = ['/admin', '/register', '/buy-etk', '/submit-offer', '/submit-bid'];
@@ -134,11 +134,8 @@ const ResponsiveAppBar = () => {
   useEffect(() => {
     // unlock wallet
     const init = async () => {
-      const _adminAddress = await registryContractRead.owner()
-      // console.log('Registry owner: ', _adminAddress);
-
-      dispatch({ type: 'UPDATE_ADMIN_ADDRESS', payload: _adminAddress });
-
+      const _ownerAddress = await axios.get(`${backendUrl}registry/getOwnerAddress`);
+      dispatch({ type: 'UPDATE_ADMIN_ADDRESS', payload: _ownerAddress.data });
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       // connectWallet
       connectWallet();

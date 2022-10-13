@@ -6,6 +6,11 @@ const convertBigNumberToNumber = (value) => {
   return Math.round(Number(ethers.utils.formatEther(value)) * 10 ** decimals);
 }
 
+const convertToBigNumber = (value) => {
+  const bigNumber = ethers.BigNumber.from(value);
+  return bigNumber;
+}
 export {
-  convertBigNumberToNumber
+  convertBigNumberToNumber,
+  convertToBigNumber
 }

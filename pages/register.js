@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import Layout from 'components/layout';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import {backendUrl, registryContractRead, REGISTRY_CONTRACT_ADDRESS} from 'utils/const';
+import {backendUrl, REGISTRY_CONTRACT_ADDRESS} from 'utils/const';
 import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
 import { Store } from "utils/Store";
 import {
@@ -48,18 +48,18 @@ const Register = () => {
       if (_isRegisteredSupplier) {
         const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
         const registeredSupplier = resRegisteredSupplier.data;
-        setAssetId(registeredSupplier[1]);
-        setCapacityOrLoad(registeredSupplier[3]);
+        setAssetId(registeredSupplier.assetId);
+        setCapacityOrLoad(registeredSupplier.capacity);
         setUsertype("Supplier");
-        setBlockAmount(registeredSupplier[2]);
-        setOfferControl(registeredSupplier[4]);
+        setBlockAmount(registeredSupplier.blockAmount);
+        setOfferControl(registeredSupplier.offerControl);
       } else if (_isRegisteredConsumer) {
         const resRegisteredConsumer = await axios.get(`${backendUrl}registry/getconsumer/${account}`);
         const registeredConsumer = resRegisteredConsumer.data;
-        setAssetId(registeredConsumer[1]);
-        setCapacityOrLoad(registeredConsumer[2]);
+        setAssetId(registeredConsumer.assetId);
+        setCapacityOrLoad(registeredConsumer.load);
         setUsertype("Consumer");
-        setOfferControl(registeredConsumer[3]);
+        setOfferControl(registeredConsumer.offerControl);
       }
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);

@@ -3,7 +3,6 @@ import Layout from 'components/layout';
 import { ethers } from "ethers";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import {
-  registryContractRead, 
   backendUrl,
   tokenContractRead,
   TOKEN_CONTRACT_ADDRESS
@@ -52,12 +51,12 @@ const BuyETK = () => {
       if (_isRegisteredSupplier) {
         const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
         const registeredSupplier = resRegisteredSupplier.data;
-        setAssetId(registeredSupplier[1]);
+        setAssetId(registeredSupplier.assetId);
         setUsertype("Supplier");
       } else if (_isRegisteredConsumer) {
         const resRegisteredConsumer = await axios.get(`${backendUrl}registry/getconsumer/${account}`);
         const registeredConsumer = resRegisteredConsumer.data;
-        setAssetId(registeredConsumer[1]);
+        setAssetId(registeredConsumer.assetId);
         setUsertype("Consumer");
       } else {
         enqueueSnackbar('This account has not been registered!', { variant: 'info', preventDuplicate: true });
@@ -114,7 +113,6 @@ const BuyETK = () => {
         enqueueSnackbar("You bought tokens successfully!", { variant: 'success', preventDuplicate: true});
         const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
         const _etkBalance = resEtkBalance.data;
-        // const balance = convertBigNumberToNumber(_etkBalance);
         setETKBalance(_etkBalance);
       }
       buyToken(etkData.amount);
@@ -126,7 +124,6 @@ const BuyETK = () => {
         enqueueSnackbar("You burned tokens successfully!", { variant: 'success', preventDuplicate: true});
         const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
         const _etkBalance = resEtkBalance.data;
-        // const balance = convertBigNumberToNumber(_etkBalance);
         setETKBalance(_etkBalance);
       }
       redeemToken(etkData.amount);

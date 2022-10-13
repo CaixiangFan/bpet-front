@@ -8,8 +8,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { convertBigNumberToNumber } from 'utils/tools';
-import { poolmarketContractRead } from 'utils/const';
+import { convertBigNumberToNumber, convertToBigNumber } from 'utils/tools';
+import { backendUrl } from 'utils/const';
+import axios from "axios";
+
 
 const columns = [
   { id: 'dateHe', label: 'Date (HE)', minWidth: 150, align: 'center', format: (value) => value.toLocaleString('en-US')},
@@ -35,7 +37,6 @@ const PPTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
-  // const [marginalPriceRows, setMarginalPriceRows] = useState();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -55,13 +56,15 @@ const PPTable = () => {
   }, []);
 
   const getsmp = async () => {
-    const totalDemandMinutes = await poolmarketContractRead.getTotalDemandMinutes();
+    const totalDemandMinutesRes =  await axios.get(`${backendUrl}poolmarket/getTotalDemandMinutes`);
+    const totalDemandMinutes = totalDemandMinutesRes.data;
     const smps = [];
     for (let i=totalDemandMinutes.length-1; i>=0; i--) {
-      var timestamp = totalDemandMinutes[i];
-      var marginalOffer = await poolmarketContractRead.getMarginalOffer(timestamp);
-      var price = convertBigNumberToNumber(marginalOffer.price);
-      var volume = convertBigNumberToNumber(marginalOffer.amount);
+      var timestamp = convertToBigNumber(totalDemandMinutes[i].hex);
+      var marginalOfferRes = await axios.get(`${backendUrl}poolmarket/getMarginalOffer/${timestamp}`);
+      var marginalOffer = marginalOfferRes.data;
+      var price = convertBigNumberToNumber(marginalOffer[1]);
+      var volume = convertBigNumberToNumber(marginalOffer[0]);
       var dateObj = new Date(timestamp * 1000);
       var he = dateObj.toLocaleDateString("en-us");
       var minutes = dateObj.getMinutes();
@@ -80,7 +83,6 @@ const PPTable = () => {
     const uniqueDateheRows = [];
     const marginalPriceRows = await getsmp();
     try {
-      // console.log(marginalPriceRows[0]);
       var currentDatehe = marginalPriceRows[0].dateHe;
       var currentDateheRows = [];
       for (let i=0; i<marginalPriceRows.length; i++) {
@@ -99,7 +101,6 @@ const PPTable = () => {
     } catch (err) {
       console.log(err);
     }
-
     const poolprices = [];
     for (let i=0; i<uniqueDateheRows.length; i++) {
       var price = 0;
@@ -124,7 +125,8 @@ const PPTable = () => {
       var dateHe = uniqueDateheRows[i][0].dateHe;
       var time = uniqueDateheRows[i][0].time;
       var timestamp = Math.floor(new Date(`${dateHe.split(' ')[0]} ${time}`).getTime() / 1000);
-      var totalDemand = convertBigNumberToNumber(await poolmarketContractRead.totalDemands(timestamp));
+      var totalDemandRes = await axios.get(`${backendUrl}poolmarket/getTotalDemand/${timestamp}`);
+      var totalDemand = totalDemandRes.data;
       poolprices.push(createData(
                     dateHe, 
                     price,

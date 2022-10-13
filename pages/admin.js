@@ -37,23 +37,23 @@ import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
 import axios from 'axios';
 
 const supplierColumns = [
-  { field: 'id', headerName: 'ID', width: 50 },
+  { field: 'id', headerName: 'ID', width: 10 },
   {
     field: 'account',
     headerName: 'Account',
-    width: 240,
+    width: 360,
     editable: false,
   },
   {
     field: 'assetId',
     headerName: 'Asset ID',
-    width: 100,
+    width: 110,
     editable: false,
   },
   {
     field: 'allowance',
     headerName: 'Allowance',
-    width: 90,
+    width: 80,
     editable: true,
   },
   {
@@ -67,14 +67,14 @@ const supplierColumns = [
     field: 'capacity',
     headerName: 'Capacity',
     type: 'number',
-    width: 100,
+    width: 70,
     editable: false,
   },
   {
     field: 'offerControl',
     headerName: 'Offer Control',
     sortable: false,
-    width: 160
+    width: 240
   },
 ];
 
@@ -83,33 +83,33 @@ const consumerColumns = [
   {
     field: 'account',
     headerName: 'Account',
-    width: 240,
+    width: 360,
     editable: false,
   },
   {
     field: 'assetId',
     headerName: 'Asset ID',
-    width: 100,
+    width: 120,
     editable: false,
   },
   {
     field: 'allowance',
     headerName: 'Allowance',
-    width: 90,
+    width: 80,
     editable: true,
   },
   {
     field: 'load',
     headerName: 'Load',
     type: 'number',
-    width: 90,
+    width: 60,
     editable: false,
   },
   {
     field: 'offerControl',
     headerName: 'Offer Control',
     sortable: false,
-    width: 160
+    width: 240
   },
 ];
 
@@ -140,7 +140,7 @@ const Admin = () => {
         new Promise((resolve, reject) =>
           setTimeout(() => {
             if (user.allowance?.trim() === '') {
-              reject(new Error("Error while saving user: name can't be empty."));
+              reject(new Error("Error while saving data: allowance can't be empty."));
             } else {
               try {
                 const updateAllowance = async () => {
