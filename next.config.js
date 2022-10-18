@@ -6,5 +6,4 @@ const nextConfig = {
     domains: ['pic.maizuo.com', 'api.ipfsbrowser.com', 'gateway.pinata.cloud'],
   },
 }
-
 module.exports = nextConfig

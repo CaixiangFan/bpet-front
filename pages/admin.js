@@ -275,7 +275,6 @@ const Admin = () => {
           // var supplier = supplierRes.data;
           const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
           const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
-          console.log(`owner: ${adminAddress}, spender: ${registeredSuppliers[i]}`);
           suppliers.push({
             id: i+1, 
             account: supplier.account,

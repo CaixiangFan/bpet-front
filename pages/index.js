@@ -1,16 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Typography, Box, Paper } from '@mui/material';
-import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack';
 import Layout from 'components/layout'
-import { Store } from "utils/Store";
 import SMPTable from 'components/homepage/table-smp';
 import PPTable from 'components/homepage/table-pp';
 
 const Home = () => {
-  const router = useRouter()
-  const { state, dispatch } = useContext(Store);
-  const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {

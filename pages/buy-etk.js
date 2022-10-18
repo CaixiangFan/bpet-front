@@ -27,7 +27,15 @@ import {
   } from '@mui/material';
 import axios from 'axios';
 
-const BuyETK = () => {
+// export async function getServerSideProps() {
+//   const response = await axios.get(`${backendUrl}admin/balance/${account}`);
+//   const ssrBalance = response.data;
+//   return {
+//     props: {ssrBalance}, // will be passed to the page component as props
+//   }
+// }
+
+const BuyETK = ({ssrBalance}) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
