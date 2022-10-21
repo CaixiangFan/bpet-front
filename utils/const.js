@@ -8,7 +8,8 @@ import paymentAbi from 'utils/contracts/Payment.sol/Payment.json';
 var chainId = 1337;
 var backendUrl = 'http://localhost:3000/';
 
-var rpcUrl = 'ws://192.168.226.150:8546';
+var rpcUrl = 'http://192.168.226.150:8545';
+// var rpcUrl = 'ws://192.168.226.150:8546';
 var defaultNetworkId = 1337;
 var chainConfig = [
   {

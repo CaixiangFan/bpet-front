@@ -167,7 +167,7 @@ const Admin = () => {
   const handleCloseSnackbar = () => setSnackbar(null);
 
   const updateBalance = async () => {
-    const response = await axios.get(`${backendUrl}admin/balance/${account}`);
+    const response = await axios.get(`${backendUrl}etk/balance/${account}`);
     setETKBalance(response.data);
   }
   

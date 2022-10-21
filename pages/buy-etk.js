@@ -28,7 +28,7 @@ import {
 import axios from 'axios';
 
 // export async function getServerSideProps() {
-//   const response = await axios.get(`${backendUrl}admin/balance/${account}`);
+//   const response = await axios.get(`${backendUrl}etk/balance/${account}`);
 //   const ssrBalance = response.data;
 //   return {
 //     props: {ssrBalance}, // will be passed to the page component as props
@@ -69,7 +69,7 @@ const BuyETK = ({ssrBalance}) => {
       }
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);
-      const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
+      const resEtkBalance = await axios.get(`${backendUrl}etk/balance/${account}`);
       const balance = resEtkBalance.data;
       setETKBalance(balance);
 
@@ -121,7 +121,7 @@ const BuyETK = ({ssrBalance}) => {
       const buyToken = async (amount) => {
         await buyETK(amount);
         enqueueSnackbar("You bought tokens successfully!", { variant: 'success', preventDuplicate: true});
-        const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
+        const resEtkBalance = await axios.get(`${backendUrl}etk/balance/${account}`);
         const _etkBalance = resEtkBalance.data;
         setETKBalance(_etkBalance);
       }
@@ -132,7 +132,7 @@ const BuyETK = ({ssrBalance}) => {
       const redeemToken = async (amount) => {
         await redeemETK(amount);
         enqueueSnackbar("You burned tokens successfully!", { variant: 'success', preventDuplicate: true});
-        const resEtkBalance = await axios.get(`${backendUrl}admin/balance/${account}`);
+        const resEtkBalance = await axios.get(`${backendUrl}etk/balance/${account}`);
         const _etkBalance = resEtkBalance.data;
         setETKBalance(_etkBalance);
       }
