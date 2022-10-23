@@ -8,8 +8,8 @@ import paymentAbi from 'utils/contracts/Payment.sol/Payment.json';
 var chainId = 1337;
 var backendUrl = 'http://localhost:3000/';
 
-var rpcUrl = 'http://192.168.226.150:8545';
-// var rpcUrl = 'ws://192.168.226.150:8546';
+var rpcUrl = 'http://192.168.226.22:8545';
+// var rpcUrl = 'ws://192.168.226.22:8546';
 var defaultNetworkId = 1337;
 var chainConfig = [
   {
@@ -25,10 +25,10 @@ var chainConfig = [
 ]
 
 // Contracts on Besu
-var TOKEN_CONTRACT_ADDRESS = '0xE3d9dbE0bC85414e1942d9A071BC9D073e9b0587';
-var REGISTRY_CONTRACT_ADDRESS = '0xec93493c4a93e2D103DF7D968DB60f8717E9F202';
-var POOLMARKET_CONTRACT_ADDRESS = '0x86DAd75Aa8A82Dd8D49e364211bC8b773297c136';
-var PAYMENT_CONTRACT_ADDRESS = '0x4150Ef7162691dD681ab427828E578E1A73450eE';
+var TOKEN_CONTRACT_ADDRESS = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
+var REGISTRY_CONTRACT_ADDRESS = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
+var POOLMARKET_CONTRACT_ADDRESS = '0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF'
+var PAYMENT_CONTRACT_ADDRESS = '0x8f0483125FCb9aaAEFA9209D8E9d7b9C8B9Fb90F'
 
 if (chainId === 5) {
   rpcUrl = 'https://eth-goerli.alchemyapi.io/v2/clmX3XYJBsntbfU05Td00zsij5-rcKqQ';

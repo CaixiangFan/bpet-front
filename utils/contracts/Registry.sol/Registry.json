@@ -242,6 +242,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      },
+      {
         "internalType": "string",
         "name": "_assetId",
         "type": "string"
@@ -264,6 +269,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      },
       {
         "internalType": "string",
         "name": "_assetId",

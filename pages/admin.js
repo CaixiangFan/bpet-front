@@ -273,17 +273,19 @@ const Admin = () => {
         for (let i=0; i<registeredSuppliers.length; i++) {
           // var supplierRes = await axios.get(`${backendUrl}registry/getsupplier/${registeredSuppliers[i]}`);
           // var supplier = supplierRes.data;
-          const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
-          const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
-          suppliers.push({
-            id: i+1, 
-            account: supplier.account,
-            assetId: supplier.assetId,
-            allowance: _allowance,
-            blockAmount: supplier.blockAmount,
-            capacity: supplier.capacity,
-            offerControl: supplier.offerControl
-          });
+          if (!(/^0*$/.test(registeredSuppliers[i].split('x')[1]))) {
+            const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
+            const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
+            suppliers.push({
+              id: i+1, 
+              account: supplier.account,
+              assetId: supplier.assetId,
+              allowance: _allowance,
+              blockAmount: supplier.blockAmount,
+              capacity: supplier.capacity,
+              offerControl: supplier.offerControl
+            });
+          }
         }
         setTabRows(suppliers);
       } 
@@ -291,16 +293,18 @@ const Admin = () => {
         const registeredConsumers = await registryContractWrite.getAllConsumers();
         let consumers = [];
         for (let i=0; i<registeredConsumers.length; i++) {
-          var consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
-          var _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
-          consumers.push({
-            id: i+1, 
-            account: consumer.account,
-            assetId: consumer.assetId,
-            allowance: _allowance,
-            load: consumer.load,
-            offerControl: consumer.offerControl
-          });
+          if (!(/^0*$/.test(registeredConsumers[i].split('x')[1]))) {
+            var consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
+            var _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
+            consumers.push({
+              id: i+1, 
+              account: consumer.account,
+              assetId: consumer.assetId,
+              allowance: _allowance,
+              load: consumer.load,
+              offerControl: consumer.offerControl
+            });
+          }
         }
         setTabRows(consumers);
       }
