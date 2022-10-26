@@ -103,7 +103,7 @@ const SubmitBid = () => {
 
   const submitBid = async (data) => {
     try {
-      const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi, signer);
+      const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi.abi, signer);
       await poolmarketContractWrite.submitBid(
         data.assetID,
         Number(data.energyAmount),

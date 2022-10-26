@@ -121,7 +121,7 @@ const Register = () => {
   };
 
   const registerUser = async (userType, registryData) => {
-    const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, signer);
+    const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi.abi, signer);
     if (userType === 'Supplier') {
       const registerSupplierTx = await registryContractWrite.registerSupplier(
         registryData.assetID,

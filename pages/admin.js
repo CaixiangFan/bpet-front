@@ -131,7 +131,7 @@ const Admin = () => {
   const [tabRows, setTabRows] = useState([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { adminAddress, walletConencted, correctNetworkConnected, account, provider, signer } = state;
-  const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+  const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi.abi, signer);
   const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, signer);
 
   const useRowMutation = () => {

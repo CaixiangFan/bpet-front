@@ -115,7 +115,7 @@ const SubmitOffer = () => {
 
   const submitOffer = async (data) => {
     try {
-      const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi, signer);
+      const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi.abi, signer);
       await poolmarketContractWrite.submitOffer(
         data.assetID,
         Number(data.blockNumber),

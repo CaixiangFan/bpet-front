@@ -145,7 +145,7 @@ const BuyETK = ({ssrBalance}) => {
     try {
       const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
       const ownerAddress = ownerAddressRes.data;
-      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi.abi, signer);
       // Confirm receiving amount of fiat money from user before transfer the ETK
       await tokenContractWrite.transferFrom(ownerAddress, account, amount);
     } catch (err) {
@@ -157,7 +157,7 @@ const BuyETK = ({ssrBalance}) => {
     try{
       const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
       const ownerAddress = ownerAddressRes.data;
-      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, signer);
+      const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi.abi, signer);
       await tokenContractWrite.transfer(ownerAddress, amount);
       // Transfer amount of fiat money to user's account before burning the ETK
     } catch (err) {
