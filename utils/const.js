@@ -1,15 +1,11 @@
 import { ethers } from "ethers";
-import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
-import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
-import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json';
-import paymentAbi from 'utils/contracts/Payment.sol/Payment.json';
 
 // Update the chainId to 5 when switching to Goerli testnet
 var chainId = 1337;
 var backendUrl = 'http://localhost:3000/';
 
-var rpcUrl = 'http://192.168.226.22:8545';
-// var rpcUrl = 'ws://192.168.226.22:8546';
+var rpcUrl = 'http://192.168.226.35:8545';
+// var rpcUrl = 'ws://192.168.226.35:8546';
 var defaultNetworkId = 1337;
 var chainConfig = [
   {
@@ -25,10 +21,10 @@ var chainConfig = [
 ]
 
 // Contracts on Besu
-var TOKEN_CONTRACT_ADDRESS = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
-var REGISTRY_CONTRACT_ADDRESS = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
-var POOLMARKET_CONTRACT_ADDRESS = '0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF'
-var PAYMENT_CONTRACT_ADDRESS = '0x8f0483125FCb9aaAEFA9209D8E9d7b9C8B9Fb90F'
+var TOKEN_CONTRACT_ADDRESS = '0x9eC42BEC54075b8Ac43a4702Ad8F8f8e9B69Dd64'
+var REGISTRY_CONTRACT_ADDRESS = '0x3fe4bACDd17EC8AAc34e17d86b24bd89748947D9'
+var POOLMARKET_CONTRACT_ADDRESS = '0x64e465Ae4FF1a0502DCD40FE1531bbB740623143'
+var PAYMENT_CONTRACT_ADDRESS = '0x924ff50C98db11D790cc0938648dfC8399cA306e'
 
 if (chainId === 5) {
   rpcUrl = 'https://eth-goerli.alchemyapi.io/v2/clmX3XYJBsntbfU05Td00zsij5-rcKqQ';
@@ -55,11 +51,6 @@ if (chainId === 5) {
 }
 const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
 
-// const registryContractRead = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, defaultProvider)
-const tokenContractRead = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi, defaultProvider)
-// const poolmarketContractRead = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi, defaultProvider)
-// const paymentContractRead = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, paymentAbi, defaultProvider)
-
 const ipfsEndpoint = 'https://gateway.pinata.cloud/ipfs/';
 const GAS_LIMIT = 0.0075 * 10 ** chainConfig[0].nativeCurrency.decimals;
 
@@ -68,10 +59,6 @@ export {
   TOKEN_CONTRACT_ADDRESS,
   POOLMARKET_CONTRACT_ADDRESS,
   PAYMENT_CONTRACT_ADDRESS,
-  // registryContractRead,
-  tokenContractRead,
-  // poolmarketContractRead,
-  // paymentContractRead,
   rpcUrl,
   backendUrl,
   defaultProvider,

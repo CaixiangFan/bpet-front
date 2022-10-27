@@ -65,6 +65,8 @@ const BuyETK = ({ssrBalance}) => {
         setAssetId(registeredConsumer.assetId);
         setUsertype("Consumer");
       } else {
+        const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
+        const registeredSupplier = resRegisteredSupplier.data;
         enqueueSnackbar('This account has not been registered!', { variant: 'info', preventDuplicate: true });
       }
       setIsRegisteredSupplier(_isRegisteredSupplier);

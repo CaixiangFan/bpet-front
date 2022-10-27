@@ -132,7 +132,7 @@ const Admin = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { adminAddress, walletConencted, correctNetworkConnected, account, provider, signer } = state;
   const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi.abi, signer);
-  const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi, signer);
+  const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi.abi, signer);
 
   const useRowMutation = () => {
     return React.useCallback(
@@ -266,6 +266,7 @@ const Admin = () => {
   const getUsers = async (userType) => {
     try{
       if (userType === 'suppliers') {
+        // console.log(await registryContractWrite.owner());
         const registeredSuppliers = await registryContractWrite.getAllSuppliers();
         // const registeredSuppliersRes = await axios.get(`${backendUrl}registry/getAllSuppliers`);
         // const registeredSuppliers = registeredSuppliersRes.data;

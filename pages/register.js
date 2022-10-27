@@ -123,21 +123,31 @@ const Register = () => {
   const registerUser = async (userType, registryData) => {
     const registryContractWrite = new ethers.Contract(REGISTRY_CONTRACT_ADDRESS, registryAbi.abi, signer);
     if (userType === 'Supplier') {
-      const registerSupplierTx = await registryContractWrite.registerSupplier(
-        registryData.assetID,
-        registryData.blockAmount,
-        registryData.capacityOrLoad,
-        registryData.orderControl
-        );
-      await registerSupplierTx.wait();
+      try{
+        const registerSupplierTx = await registryContractWrite.registerSupplier(
+          account,
+          registryData.assetID,
+          registryData.blockAmount,
+          registryData.capacityOrLoad,
+          registryData.orderControl
+          );
+        await registerSupplierTx.wait();
+      } catch (error) {
+        console.log(error);
+      }
     }
     else if (userType === 'Consumer') {
-      const registerConsumerTx = await registryContractWrite.registerConsumer(
-        registryData.assetID,
-        registryData.capacityOrLoad,
-        registryData.orderControl
-        );
-      await registerConsumerTx.wait();
+      try{
+        const registerConsumerTx = await registryContractWrite.registerConsumer(
+          account,
+          registryData.assetID,
+          registryData.capacityOrLoad,
+          registryData.orderControl
+          );
+        await registerConsumerTx.wait();
+      } catch(error) {
+        console.log(error);
+      }
     }
   }
 
