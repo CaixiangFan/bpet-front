@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="N4T2xADhDQuCGSEhYTma" name="Page-1">
-        <mxGraphModel dx="1929" dy="622" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1992" dy="544" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -19,7 +19,7 @@
                 <mxCell id="6" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="70" y="130" width="610" height="320" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" value="&lt;b&gt;System Marginal Price diagram&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="7" value="&lt;b&gt;System Marginal Price table&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="154" y="280" width="210" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="8" value="Connect Wallet" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -37,7 +37,7 @@
                 <mxCell id="12" value="Register" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="1" vertex="1">
                     <mxGeometry x="254" y="80" width="56" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="&lt;b&gt;Pool Price diagram&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="13" value="&lt;b&gt;Pool Price&amp;nbsp;&lt;/b&gt;&lt;b&gt;table&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="409" y="280" width="191" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="14" value="" style="edgeStyle=none;html=1;" parent="1" edge="1">
@@ -461,6 +461,17 @@
                         <mxPoint x="520.8800000000001" y="219.5" as="sourcePoint"/>
                         <mxPoint x="580" y="220" as="targetPoint"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="178" value="" style="edgeStyle=none;html=1;" parent="1" target="179" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="680" y="325" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="179" value="&lt;div style=&quot;text-align: left&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;&lt;span&gt;API Endpoints (&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;GET Methods&lt;/span&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;): /&lt;/span&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255) ; background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;menlo&amp;#34; , &amp;#34;monaco&amp;#34; , &amp;#34;courier new&amp;#34; , monospace&quot;&gt;poolmarket/getSystemMarginalMinutes&lt;/span&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;/&lt;span style=&quot;background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;menlo&amp;#34; , &amp;#34;monaco&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; text-align: center&quot;&gt;&lt;font style=&quot;font-size: 12px&quot;&gt;poolmarket/getMarginalOffer/${timestamp&lt;/font&gt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;menlo&amp;#34; , &amp;#34;monaco&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; font-size: 16px ; text-align: center&quot;&gt;}&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;1. Front regularly gets the smp minutes timestamp.&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;2. Front gets the marginal offers using smp timestamps.&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;3. Front end calculates pool price from smp results.&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="784" y="230" width="296" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="180" value="&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;Backend Admin keeps listening to blockchain events.&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;When Admin listens to an offer or a bid submitted event, it waits till the end of current minute; then calls calculateSMP() to calculate an smp.&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="100" width="290" height="100" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

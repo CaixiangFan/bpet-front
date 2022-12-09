@@ -37,6 +37,7 @@ const SubmitOffer = () => {
     const checkRegistered = async () => {
       const _isRegisteredSupplierRes = await axios.get(`${backendUrl}registry/isregisteredsupplier/${account}`);
       const _isRegisteredSupplier = _isRegisteredSupplierRes.data;
+      console.log('registered supplier: ', _isRegisteredSupplier);
       if (_isRegisteredSupplier) {
         const registeredSupplierRes = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
         const registeredSupplier = registeredSupplierRes.data;

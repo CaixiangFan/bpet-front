@@ -55,11 +55,11 @@ const PPTable = () => {
   }, []);
 
   const getsmp = async () => {
-    const totalDemandMinutesRes =  await axios.get(`${backendUrl}poolmarket/getTotalDemandMinutes`);
-    const totalDemandMinutes = totalDemandMinutesRes.data;
+    const smpMinutesRes =  await axios.get(`${backendUrl}poolmarket/getSystemMarginalMinutes`);
+    const smpMinutes = smpMinutesRes.data;
     const smps = [];
-    for (let i=totalDemandMinutes.length-1; i>=0; i--) {
-      var timestamp = totalDemandMinutes[i];
+    for (let i=smpMinutes.length-1; i>=0; i--) {
+      var timestamp = smpMinutes[i];
       var marginalOfferRes = await axios.get(`${backendUrl}poolmarket/getMarginalOffer/${timestamp}`);
       var marginalOffer = marginalOfferRes.data;
       var price = marginalOffer.price;

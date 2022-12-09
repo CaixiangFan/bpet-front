@@ -56,8 +56,9 @@ const SMPTable = () => {
 
   //get all smps in the past
   const getsmp = async () => {
-    const totalDemandMinutesRes =  await axios.get(`${backendUrl}poolmarket/getTotalDemandMinutes`);
-    const totalDemandMinutes = totalDemandMinutesRes.data;    const smps = [];
+    const totalDemandMinutesRes =  await axios.get(`${backendUrl}poolmarket/getSystemMarginalMinutes`);
+    const totalDemandMinutes = totalDemandMinutesRes.data;    
+    const smps = [];
     for (let i=totalDemandMinutes.length-1; i>=0; i--) {
       var timestamp = totalDemandMinutes[i];
       var marginalOfferRes = await axios.get(`${backendUrl}poolmarket/getMarginalOffer/${timestamp}`);

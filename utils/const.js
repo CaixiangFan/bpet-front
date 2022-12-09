@@ -2,10 +2,10 @@ import { ethers } from "ethers";
 
 // Update the chainId to 5 when switching to Goerli testnet
 var chainId = 1337;
-var backendUrl = 'http://localhost:3000/';
+var backendUrl = process.env.BACKEND_URL;
 
-var rpcUrl = 'http://192.168.226.35:8545';
-// var rpcUrl = 'ws://192.168.226.35:8546';
+var rpcUrl = process.env.RPC_URL;
+// var rpcUrl = 'ws://192.168.226.38:8546';
 var defaultNetworkId = 1337;
 var chainConfig = [
   {
@@ -21,11 +21,10 @@ var chainConfig = [
 ]
 
 // Contracts on Besu
-var TOKEN_CONTRACT_ADDRESS = '0x9eC42BEC54075b8Ac43a4702Ad8F8f8e9B69Dd64'
-var REGISTRY_CONTRACT_ADDRESS = '0x3fe4bACDd17EC8AAc34e17d86b24bd89748947D9'
-var POOLMARKET_CONTRACT_ADDRESS = '0x64e465Ae4FF1a0502DCD40FE1531bbB740623143'
-var PAYMENT_CONTRACT_ADDRESS = '0x924ff50C98db11D790cc0938648dfC8399cA306e'
-
+var TOKEN_CONTRACT_ADDRESS = process.env.TOKEN_CONTRACT_ADDRESS;
+var REGISTRY_CONTRACT_ADDRESS = process.env.REGISTRY_CONTRACT_ADDRESS;
+var POOLMARKET_CONTRACT_ADDRESS = process.env.POOLMARKET_CONTRACT_ADDRESS;
+var PAYMENT_CONTRACT_ADDRESS = process.env.PAYMENT_CONTRACT_ADDRESS;
 if (chainId === 5) {
   rpcUrl = 'https://eth-goerli.alchemyapi.io/v2/clmX3XYJBsntbfU05Td00zsij5-rcKqQ';
   defaultNetworkId = 5;
@@ -44,10 +43,10 @@ if (chainId === 5) {
   ]
 
   // Contracts on Goerli
-  TOKEN_CONTRACT_ADDRESS = '0x0519C952F4825ba7050F0cAB86131A580474Ea2e';
-  REGISTRY_CONTRACT_ADDRESS = '0x2E5Cdd26af7E5d0ABB9CF3721Cf988dFf42B20a4';
-  POOLMARKET_CONTRACT_ADDRESS = '0xA94f586cB8A023Bb43eE96E38dE24608fF890AFC';
-  PAYMENT_CONTRACT_ADDRESS = '0x025301790aDb4fAfa7C79128a2156eA0D1A6c078';
+  TOKEN_CONTRACT_ADDRESS = process.env.GOERLI_TOKEN_CONTRACT_ADDRESS;
+  REGISTRY_CONTRACT_ADDRESS = process.env.GOERLI_REGISTRY_CONTRACT_ADDRESS;
+  POOLMARKET_CONTRACT_ADDRESS = process.env.GOERLI_POOLMARKET_CONTRACT_ADDRESS;
+  PAYMENT_CONTRACT_ADDRESS = process.env.GOERLI_PAYMENT_CONTRACT_ADDRESS;
 }
 const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
 
