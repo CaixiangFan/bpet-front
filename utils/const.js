@@ -5,7 +5,7 @@ var chainId = 1337;
 var backendUrl = process.env.BACKEND_URL;
 
 var rpcUrl = process.env.RPC_URL;
-// var rpcUrl = 'ws://192.168.226.38:8546';
+// var rpcUrl = 'ws://192.168.226.33:8546';
 var defaultNetworkId = 1337;
 var chainConfig = [
   {
