@@ -8,7 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { backendUrl } from 'utils/const';
+import { backendUrl } from 'utils/utils';
 import axios from "axios";
 
 
@@ -81,68 +81,72 @@ const PPTable = () => {
     // loop to change to two dimentional array based on dateHE
     const uniqueDateheRows = [];
     const marginalPriceRows = await getsmp();
-    try {
-      var currentDatehe = marginalPriceRows[0].dateHe;
-      var currentDateheRows = [];
-      for (let i=0; i<marginalPriceRows.length; i++) {
-        if (marginalPriceRows[i].dateHe == currentDatehe) {
-          currentDateheRows.push(marginalPriceRows[i]);
-        } else {
-          uniqueDateheRows.push(currentDateheRows);
-          currentDateheRows = [];
-          currentDateheRows.push(marginalPriceRows[i]);
-          currentDatehe = marginalPriceRows[i].dateHe;
+    if (marginalPriceRows.length > 0) {
+      try {
+        var currentDatehe = marginalPriceRows[0].dateHe;
+        var currentDateheRows = [];
+        for (let i=0; i<marginalPriceRows.length; i++) {
+          if (marginalPriceRows[i].dateHe == currentDatehe) {
+            currentDateheRows.push(marginalPriceRows[i]);
+          } else {
+            uniqueDateheRows.push(currentDateheRows);
+            currentDateheRows = [];
+            currentDateheRows.push(marginalPriceRows[i]);
+            currentDatehe = marginalPriceRows[i].dateHe;
+          }
+          if (i == marginalPriceRows.length - 1) {
+            uniqueDateheRows.push(currentDateheRows);
+          }
         }
-        if (i == marginalPriceRows.length - 1) {
-          uniqueDateheRows.push(currentDateheRows);
-        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
     }
     const poolprices = [];
-    for (let i=0; i<uniqueDateheRows.length; i++) {
-      var price = 0;
-      var dateHe = uniqueDateheRows[i][0].dateHe;
-      var time = uniqueDateheRows[i][0].time;
-      var timestamp = Math.floor(new Date(`${dateHe.split(' ')[0]} ${time}`).getTime() / 1000);
-      var totalDemandRes = await axios.get(`${backendUrl}poolmarket/getTotalDemand/${timestamp}`);
-      var totalDemand = totalDemandRes.data;
-
-      // Only one smp in the current hour
-      if (uniqueDateheRows[i].length === 1) {
-        price = Number(uniqueDateheRows[i][0].price);
-        poolprices.push(createData(
-          dateHe, 
-          price,
-          totalDemand));
-        continue;
-      }
-
-      // More than one smps, take the weighted average
-      var cumulativePrice = 0;
-      var _smps = uniqueDateheRows[i].reverse();
-      for (let j = 0; j < _smps.length; j++) {
-        var smprice = Number(_smps[j].price);
-        var duration = 0;
-        if (j == 0) {
-          duration = Number(_smps[j + 1].time.split(':')[1]);
-        } else if (j == _smps.length - 1) {
-          duration = 60 - Number(_smps[j].time.split(':')[1]);
-        } else {
-          duration =
-            Number(_smps[j + 1].time.split(':')[1]) -
-            Number(_smps[j].time.split(':')[1]);
+    if (uniqueDateheRows.length > 0) {
+      for (let i=0; i<uniqueDateheRows.length; i++) {
+        var price = 0;
+        var dateHe = uniqueDateheRows[i][0].dateHe;
+        var time = uniqueDateheRows[i][0].time;
+        var timestamp = Math.floor(new Date(`${dateHe.split(' ')[0]} ${time}`).getTime() / 1000);
+        var totalDemandRes = await axios.get(`${backendUrl}poolmarket/getTotalDemand/${timestamp}`);
+        var totalDemand = totalDemandRes.data;
+  
+        // Only one smp in the current hour
+        if (uniqueDateheRows[i].length === 1) {
+          price = Number(uniqueDateheRows[i][0].price);
+          poolprices.push(createData(
+            dateHe, 
+            price,
+            totalDemand));
+          continue;
         }
-        cumulativePrice += smprice * duration;
-      }
-      
-      price = Math.round((cumulativePrice / 60) * 100) / 100;
-      poolprices.push(createData(
-                    dateHe, 
-                    price,
-                    totalDemand));
-    }    
+  
+        // More than one smps, take the weighted average
+        var cumulativePrice = 0;
+        var _smps = uniqueDateheRows[i].reverse();
+        for (let j = 0; j < _smps.length; j++) {
+          var smprice = Number(_smps[j].price);
+          var duration = 0;
+          if (j == 0) {
+            duration = Number(_smps[j + 1].time.split(':')[1]);
+          } else if (j == _smps.length - 1) {
+            duration = 60 - Number(_smps[j].time.split(':')[1]);
+          } else {
+            duration =
+              Number(_smps[j + 1].time.split(':')[1]) -
+              Number(_smps[j].time.split(':')[1]);
+          }
+          cumulativePrice += smprice * duration;
+        }
+        
+        price = Math.round((cumulativePrice / 60) * 100) / 100;
+        poolprices.push(createData(
+                      dateHe, 
+                      price,
+                      totalDemand));
+      }    
+    }
     return poolprices;
   }
 

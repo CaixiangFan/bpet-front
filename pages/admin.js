@@ -29,9 +29,10 @@ import Layout from 'components/layout'
 import { DataGrid } from '@mui/x-data-grid';
 import {
   backendUrl,
+  convertBigNumberToNumber,
   REGISTRY_CONTRACT_ADDRESS,
   TOKEN_CONTRACT_ADDRESS
-} from 'utils/const';
+} from 'utils/utils';
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json';
 import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
 import axios from 'axios';
@@ -102,7 +103,7 @@ const consumerColumns = [
     field: 'load',
     headerName: 'Load',
     type: 'number',
-    width: 60,
+    width: 80,
     editable: false,
   },
   {
@@ -144,7 +145,14 @@ const Admin = () => {
             } else {
               try {
                 const updateAllowance = async () => {
-                  await tokenContractWrite.approve(user.account, user.allowance);
+                  const balance = convertBigNumberToNumber(await tokenContractWrite.balanceOf(adminAddress));
+                  if (balance > 0) {
+                    const tx = await tokenContractWrite.approve(user.account, user.allowance);
+                    const receipt = await tx.wait(1);
+                    if (receipt.status == 1) {
+                      enqueueSnackbar('Approve success!', { variant: 'success', preventDuplicate: true });
+                    }
+                  }
                 }
                 updateAllowance();
               } catch (err) {
@@ -212,7 +220,7 @@ const Admin = () => {
   }
 
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const etkData = {
@@ -228,28 +236,24 @@ const Admin = () => {
       return
     }
 
-    if (actionType === 'mintETK') {
-      const mintToken = async (amount) => {
-        await mintETK(amount);
-        enqueueSnackbar("Admin minted tokens successfully!", { variant: 'success', preventDuplicate: true});
-        await updateBalance();
-      }
-      mintToken(etkData.amount);
+    switch (actionType) {
+      case "mintETK": 
+        await mintETK(etkData.amount);
+        break;
+      case "burnETK":
+        await burnETK(etkData.amount);
+        break;
     }
-
-    if (actionType === 'burnETK') {
-      const burnToken = async (amount) => {
-        await burnETK(amount);
-        enqueueSnackbar("Admin burned tokens successfully!", { variant: 'success', preventDuplicate: true});
-        await updateBalance();
-      }
-      burnToken(etkData.amount);
-    }
+    await updateBalance();
   }
 
   const mintETK = async (amount) => {
     try {
-      await tokenContractWrite.mint(account, amount);
+      const tx = await tokenContractWrite.mint(account, amount);
+      const receipt = await tx.wait(1);
+      if (receipt.status == 1) {
+        enqueueSnackbar(`Admin minted ${amount} tokens successfully!`, { variant: 'success', preventDuplicate: true});
+      }
     } catch (err) {
       console.log(err);
     }
@@ -257,57 +261,73 @@ const Admin = () => {
 
   const burnETK = async (amount) => {
     try{
-      await tokenContractWrite.burn(amount);
+      const tx = await tokenContractWrite.burn(amount);
+      const receipt = await tx.wait(1);
+      if (receipt.status == 1) {
+        enqueueSnackbar(`Admin burned ${amount} tokens successfully!`, { variant: 'success', preventDuplicate: true});
+      }
     } catch (err) {
       console.log(err);
     }
   }
 
+  const querySuppliers = async () => {
+    const registeredSuppliersRes = await axios.get(`${backendUrl}registry/getAllSuppliers`);
+    const registeredSuppliers = registeredSuppliersRes.data;
+    let suppliers = [];
+    for (let i=0; i<registeredSuppliers.length; i++) {
+      if (!(/^0*$/.test(registeredSuppliers[i].split('x')[1]))) {
+        var supplierRes = await axios.get(`${backendUrl}registry/getsupplier/${registeredSuppliers[i]}`);
+        var supplier = supplierRes.data;
+        // const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
+        // const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
+        var _allowanceRes = await axios.get(`${backendUrl}etk/allowance/${adminAddress}/${registeredSuppliers[i]}`);
+        var _allowance = _allowanceRes.data;
+        suppliers.push({
+          id: i+1, 
+          account: supplier.account,
+          assetId: supplier.assetId,
+          allowance: _allowance,
+          blockAmount: supplier.blockAmount,
+          capacity: supplier.capacity,
+          offerControl: supplier.offerControl
+        });
+      }
+    }
+    setTabRows(suppliers);
+  }
+
+  const queryConsumers = async () => {
+    const registeredConsumersRes = await axios.get(`${backendUrl}registry/getAllConsumers`);
+    const registeredConsumers = registeredConsumersRes.data;
+    // const registeredConsumers = await registryContractWrite.getAllConsumers();
+    let consumers = [];
+    for (let i=0; i<registeredConsumers.length; i++) {
+      if (!(/^0*$/.test(registeredConsumers[i].split('x')[1]))) {
+        var consumerRes = await axios.get(`${backendUrl}registry/getconsumer/${registeredConsumers[i]}`);
+        var consumer = consumerRes.data;
+        // var consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
+        var _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
+        consumers.push({
+          id: i+1, 
+          account: consumer.account,
+          assetId: consumer.assetId,
+          allowance: _allowance,
+          load: consumer.load,
+          offerControl: consumer.offerControl
+        });
+      }
+    }
+    setTabRows(consumers);  
+  }
+
   const getUsers = async (userType) => {
     try{
       if (userType === 'suppliers') {
-        // console.log(await registryContractWrite.owner());
-        const registeredSuppliers = await registryContractWrite.getAllSuppliers();
-        // const registeredSuppliersRes = await axios.get(`${backendUrl}registry/getAllSuppliers`);
-        // const registeredSuppliers = registeredSuppliersRes.data;
-        let suppliers = [];
-        for (let i=0; i<registeredSuppliers.length; i++) {
-          // var supplierRes = await axios.get(`${backendUrl}registry/getsupplier/${registeredSuppliers[i]}`);
-          // var supplier = supplierRes.data;
-          if (!(/^0*$/.test(registeredSuppliers[i].split('x')[1]))) {
-            const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
-            const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
-            suppliers.push({
-              id: i+1, 
-              account: supplier.account,
-              assetId: supplier.assetId,
-              allowance: _allowance,
-              blockAmount: supplier.blockAmount,
-              capacity: supplier.capacity,
-              offerControl: supplier.offerControl
-            });
-          }
-        }
-        setTabRows(suppliers);
+        await querySuppliers();
       } 
       if (userType === 'consumers') {
-        const registeredConsumers = await registryContractWrite.getAllConsumers();
-        let consumers = [];
-        for (let i=0; i<registeredConsumers.length; i++) {
-          if (!(/^0*$/.test(registeredConsumers[i].split('x')[1]))) {
-            var consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
-            var _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
-            consumers.push({
-              id: i+1, 
-              account: consumer.account,
-              assetId: consumer.assetId,
-              allowance: _allowance,
-              load: consumer.load,
-              offerControl: consumer.offerControl
-            });
-          }
-        }
-        setTabRows(consumers);
+        await queryConsumers();
       }
     } catch(err) {
       console.log(err);
@@ -316,6 +336,7 @@ const Admin = () => {
 
   const handleClickSearch = (event) => {
     event.preventDefault();
+    console.log({usertype});
     getUsers(usertype);
   }
 
@@ -504,8 +525,8 @@ const Admin = () => {
                 {/* <MenuItem value="">
                   <em>None</em>
                 </MenuItem> */}
-                <MenuItem value={'suppliers'}>All Registered Suppliers</MenuItem>
-                <MenuItem value={'consumers'}>All Registered Consumers</MenuItem>
+                <MenuItem value={'suppliers'} onClick={querySuppliers} >All Registered Suppliers </MenuItem>
+                <MenuItem value={'consumers'} onClick={queryConsumers} >All Registered Consumers </MenuItem>
               </Select>
             </FormControl>
           </Grid>

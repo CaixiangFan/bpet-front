@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import Layout from 'components/layout';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import {backendUrl, REGISTRY_CONTRACT_ADDRESS} from 'utils/const';
+import {backendUrl, REGISTRY_CONTRACT_ADDRESS} from 'utils/utils';
 import registryAbi from 'utils/contracts/Registry.sol/Registry.json';
 import { Store } from "utils/Store";
 import {
@@ -131,7 +131,7 @@ const Register = () => {
           registryData.capacityOrLoad,
           registryData.orderControl
           );
-        await registerSupplierTx.wait();
+        const receipt = await registerSupplierTx.wait(1);
       } catch (error) {
         console.log(error);
       }
@@ -144,7 +144,7 @@ const Register = () => {
           registryData.capacityOrLoad,
           registryData.orderControl
           );
-        await registerConsumerTx.wait();
+          const receipt = await registerConsumerTx.wait(1);
       } catch(error) {
         console.log(error);
       }

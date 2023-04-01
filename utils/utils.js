@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, BigNumber } from "ethers";
 
 // Update the chainId to 5 when switching to Goerli testnet
 var chainId = 1337;
@@ -53,11 +53,24 @@ const defaultProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
 const ipfsEndpoint = 'https://gateway.pinata.cloud/ipfs/';
 const GAS_LIMIT = 0.0075 * 10 ** chainConfig[0].nativeCurrency.decimals;
 
+const convertBigNumberToNumber = (value) => {
+  const decimals = 18;
+  return Math.round(Number(ethers.utils.formatEther(value)) * 10 ** decimals);
+}
+
+const convertToBigNumber = (value) => {
+  const decimals = 18;
+  return BigNumber.from(String(value * 10 ** decimals));
+}
+
+
 export {
   REGISTRY_CONTRACT_ADDRESS,
   TOKEN_CONTRACT_ADDRESS,
   POOLMARKET_CONTRACT_ADDRESS,
   PAYMENT_CONTRACT_ADDRESS,
+  convertBigNumberToNumber,
+  convertToBigNumber,
   rpcUrl,
   backendUrl,
   defaultProvider,

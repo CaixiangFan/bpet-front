@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import Layout from 'components/layout';
 import { ethers } from "ethers";
 import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
-import { POOLMARKET_CONTRACT_ADDRESS, backendUrl } from 'utils/const';
+import { POOLMARKET_CONTRACT_ADDRESS, backendUrl } from 'utils/utils';
 import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";
@@ -25,6 +25,7 @@ const SubmitBid = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
+  const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi.abi, signer);
   const [usertype, setUsertype] = useState('');
   const [assetId, setAssetId] = useState('');
   const [load, setLoad] = useState(0);
@@ -96,18 +97,20 @@ const SubmitBid = () => {
     }
     const submitABid = async (bidData) => {
       await submitBid(bidData);
-      enqueueSnackbar("You submitted a bid successfully!", { variant: 'success', preventDuplicate: true});
     }
     submitABid(bidData);
   };
 
   const submitBid = async (data) => {
     try {
-      const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi.abi, signer);
-      await poolmarketContractWrite.submitBid(
+      const tx = await poolmarketContractWrite.submitBid(
         Number(data.energyAmount),
         Number(data.price)
       );
+      const receipt = await tx.wait(1);
+      if (receipt.status == 1) {
+        enqueueSnackbar("You submitted a bid successfully!", { variant: 'success', preventDuplicate: true});
+      }
     } catch (err) {
       console.log(err);
     }

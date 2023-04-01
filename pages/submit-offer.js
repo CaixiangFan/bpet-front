@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import Layout from 'components/layout';
 import { ethers } from "ethers";
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
-import { POOLMARKET_CONTRACT_ADDRESS, backendUrl } from 'utils/const';
+import { POOLMARKET_CONTRACT_ADDRESS, backendUrl } from 'utils/utils';
 import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";
@@ -19,12 +19,13 @@ import {
     Box
   } from '@mui/material';
 import axios from "axios";
+import { waitUntilSymbol } from 'next/dist/server/web/spec-compliant/fetch-event';
 
 const SubmitOffer = () => {
-
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
+  const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi.abi, signer);
   const [assetId, setAssetId] = useState('');
   const [blockAmount, setBlockAmount] = useState(0);
   const [capacity, setCapacity] = useState(0);
@@ -109,19 +110,21 @@ const SubmitOffer = () => {
     }
     const submitAnOffer = async (offerData) => {
       await submitOffer(offerData);
-      enqueueSnackbar("You submitted an offer successfully!", { variant: 'success', preventDuplicate: true});
     }
     submitAnOffer(offerData);
   };
 
   const submitOffer = async (data) => {
     try {
-      const poolmarketContractWrite = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi.abi, signer);
-      await poolmarketContractWrite.submitOffer(
+      const tx = await poolmarketContractWrite.submitOffer(
         Number(data.blockNumber),
         Number(data.energyAmount),
         Number(data.price)
       );
+      const receipt = await tx.wait(1);
+      if (receipt.status == 1) {
+        enqueueSnackbar("You submitted an offer successfully!", { variant: 'success', preventDuplicate: true});
+      }
     } catch (err) {
       console.log(err);
     }

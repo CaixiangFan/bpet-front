@@ -5,7 +5,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import {
   backendUrl,
   TOKEN_CONTRACT_ADDRESS
-} from 'utils/const';
+} from 'utils/utils';
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";

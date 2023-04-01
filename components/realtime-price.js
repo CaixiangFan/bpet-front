@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Box, Card } from '@mui/material';
-import {  backendUrl } from 'utils/const';
+import {  backendUrl } from 'utils/utils';
 import axios from "axios";
 
 const options = {

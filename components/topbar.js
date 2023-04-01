@@ -14,11 +14,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
 import { useSnackbar } from 'notistack';
 import { Store } from "utils/Store";
-import { defaultNetworkId, backendUrl, besuChainConfig } from 'utils/const';
+import { defaultNetworkId, backendUrl, besuChainConfig } from 'utils/utils';
 import axios from 'axios';
 
 const pages = ['I\'m Admin', 'Register', 'Buy ETK', 'Submit Offer', 'Submit Bid'];
@@ -26,25 +24,11 @@ const pages_link = ['/admin', '/register', '/buy-etk', '/submit-offer', '/submit
 
 const ResponsiveAppBar = () => {
   const { state, dispatch } = useContext(Store);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const router = useRouter()
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
 
   const [anchorElNav, setAnchorElNav] = useState(null);
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleRedirect = (i) => {
-    setAnchorElNav(null);
-    router.push(pages_link[i])
-  }
 
   // Web3 Integration
   const web3Modal = new Web3Modal({ network: 'mainnet', cacheProvider: true })
@@ -163,7 +147,8 @@ const ResponsiveAppBar = () => {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            href="javascript:void(0);"
+            onClick={() => router.push('/')}
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -176,67 +161,12 @@ const ResponsiveAppBar = () => {
           >
             BPET
           </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page, i) => (
-                <MenuItem key={page} onClick={() => { handleRedirect(i) }}>
-                  <Typography textAlign="center">{page}</Typography>
-
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'Arial',
-              fontWeight: 700,
-              letterSpacing: '.1rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            BPET
-          </Typography>
+          
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page, i) => (
               <Button
                 key={page}
-                onClick={() => { handleRedirect(i) }}
+                onClick={() => { router.push(pages_link[i]) }}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
