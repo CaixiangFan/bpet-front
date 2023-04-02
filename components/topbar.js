@@ -118,7 +118,7 @@ const ResponsiveAppBar = () => {
   useEffect(() => {
     // unlock wallet
     const init = async () => {
-      const _ownerAddress = await axios.get(`${backendUrl}registry/getOwnerAddress`);
+      const _ownerAddress = await axios.get(`/api/registry/getOwnerAddress`);
       dispatch({ type: 'UPDATE_ADMIN_ADDRESS', payload: _ownerAddress.data });
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       // connectWallet
@@ -147,7 +147,7 @@ const ResponsiveAppBar = () => {
             variant="h6"
             noWrap
             component="a"
-            href="javascript:void(0);"
+            href="#!"
             onClick={() => router.push('/')}
             sx={{
               mr: 2,

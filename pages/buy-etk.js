@@ -28,7 +28,7 @@ import {
 import axios from 'axios';
 
 // export async function getServerSideProps() {
-//   const response = await axios.get(`${backendUrl}etk/balance/${account}`);
+//   const response = await axios.get(`/api/etk/balance/${account}`);
 //   const ssrBalance = response.data;
 //   return {
 //     props: {ssrBalance}, // will be passed to the page component as props
@@ -50,33 +50,33 @@ const BuyETK = ({ssrBalance}) => {
   useEffect(() => {
     if (account.length === 0) return
     const checkRegistered = async () => {
-      const resIsRegisteredSupplier = await axios.get(`${backendUrl}registry/isregisteredsupplier/${account}`);
-      const resIsRegisteredConsumer = await axios.get(`${backendUrl}registry/isregisteredconsumer/${account}`);
+      const resIsRegisteredSupplier = await axios.get(`/api/registry/isregisteredsupplier/${account}`);
+      const resIsRegisteredConsumer = await axios.get(`/api/registry/isregisteredconsumer/${account}`);
       const _isRegisteredSupplier = resIsRegisteredSupplier.data;
       const _isRegisteredConsumer = resIsRegisteredConsumer.data;
       if (_isRegisteredSupplier) {
-        const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
+        const resRegisteredSupplier = await axios.get(`/api/registry/getsupplier/${account}`);
         const registeredSupplier = resRegisteredSupplier.data;
         setAssetId(registeredSupplier.assetId);
         setUsertype("Supplier");
       } else if (_isRegisteredConsumer) {
-        const resRegisteredConsumer = await axios.get(`${backendUrl}registry/getconsumer/${account}`);
+        const resRegisteredConsumer = await axios.get(`/api/registry/getconsumer/${account}`);
         const registeredConsumer = resRegisteredConsumer.data;
         setAssetId(registeredConsumer.assetId);
         setUsertype("Consumer");
       } else {
-        const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
+        const resRegisteredSupplier = await axios.get(`/api/registry/getsupplier/${account}`);
         const registeredSupplier = resRegisteredSupplier.data;
         enqueueSnackbar('This account has not been registered!', { variant: 'info', preventDuplicate: true });
       }
       setIsRegisteredSupplier(_isRegisteredSupplier);
       setIsRegisteredConsumer(_isRegisteredConsumer);
-      const resEtkBalance = await axios.get(`${backendUrl}etk/balance/${account}`);
+      const resEtkBalance = await axios.get(`/api/etk/balance/${account}`);
       const balance = resEtkBalance.data;
       setETKBalance(balance);
 
-      const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
-      const allowanceRes = await axios.get(`${backendUrl}etk/allowance/${ownerAddressRes.data}/${account}`);
+      const ownerAddressRes = await axios.get(`/api/etk/getOwnerAddress`);
+      const allowanceRes = await axios.get(`/api/etk/allowance/${ownerAddressRes.data}/${account}`);
       const allowance = allowanceRes.data;
       setAllowance(allowance);
     }
@@ -122,8 +122,7 @@ const BuyETK = ({ssrBalance}) => {
     if (actionType === 'buyETK') {
       const buyToken = async (amount) => {
         await buyETK(amount);
-        enqueueSnackbar("You bought tokens successfully!", { variant: 'success', preventDuplicate: true});
-        const resEtkBalance = await axios.get(`${backendUrl}etk/balance/${account}`);
+        const resEtkBalance = await axios.get(`/api/etk/balance/${account}`);
         const _etkBalance = resEtkBalance.data;
         setETKBalance(_etkBalance);
       }
@@ -133,8 +132,7 @@ const BuyETK = ({ssrBalance}) => {
     if (actionType === 'redeemETK') {
       const redeemToken = async (amount) => {
         await redeemETK(amount);
-        enqueueSnackbar("You burned tokens successfully!", { variant: 'success', preventDuplicate: true});
-        const resEtkBalance = await axios.get(`${backendUrl}etk/balance/${account}`);
+        const resEtkBalance = await axios.get(`/api/etk/balance/${account}`);
         const _etkBalance = resEtkBalance.data;
         setETKBalance(_etkBalance);
       }
@@ -145,11 +143,15 @@ const BuyETK = ({ssrBalance}) => {
 
   const buyETK = async (amount) => {
     try {
-      const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
+      const ownerAddressRes = await axios.get(`/api/etk/getOwnerAddress`);
       const ownerAddress = ownerAddressRes.data;
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi.abi, signer);
       // Confirm receiving amount of fiat money from user before transfer the ETK
-      await tokenContractWrite.transferFrom(ownerAddress, account, amount);
+      const tx = await tokenContractWrite.transferFrom(ownerAddress, account, amount);
+      const receipt = await tx.wait(1);
+      if (receipt.status == 1) {
+        enqueueSnackbar("You bought tokens successfully!", { variant: 'success', preventDuplicate: true});
+      }
     } catch (err) {
       console.log(err);
     }
@@ -157,10 +159,14 @@ const BuyETK = ({ssrBalance}) => {
 
   const redeemETK = async (amount) => {
     try{
-      const ownerAddressRes = await axios.get(`${backendUrl}etk/getOwnerAddress`);
+      const ownerAddressRes = await axios.get(`/api/etk/getOwnerAddress`);
       const ownerAddress = ownerAddressRes.data;
       const tokenContractWrite = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, tokenAbi.abi, signer);
-      await tokenContractWrite.transfer(ownerAddress, amount);
+      const tx = await tokenContractWrite.transfer(ownerAddress, amount);
+      const receipt = await tx.wait(1);
+      if (receipt.status == 1) {
+        enqueueSnackbar("You burned tokens successfully!", { variant: 'success', preventDuplicate: true});
+      }
       // Transfer amount of fiat money to user's account before burning the ETK
     } catch (err) {
       console.log(err);

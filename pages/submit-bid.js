@@ -36,12 +36,12 @@ const SubmitBid = () => {
   useEffect(() => {
     if (account.length === 0) return
     const checkRegistered = async () => {
-      const _isRegisteredConsumerRes = await axios.get(`${backendUrl}registry/isregisteredconsumer/${account}`);
+      const _isRegisteredConsumerRes = await axios.get(`/api/registry/isregisteredconsumer/${account}`);
       const _isRegisteredConsumer = _isRegisteredConsumerRes.data;
       if (_isRegisteredConsumer) {
-        const registeredConsumerRes = await await axios.get(`${backendUrl}registry/getconsumer/${account}`);
+        const registeredConsumerRes = await axios.get(`/api/registry/getconsumer/${account}`);
         const registeredConsumer = registeredConsumerRes.data;
-        const minmaxPricesRes = await axios.get(`${backendUrl}poolmarket/getMinMaxPrices`);
+        const minmaxPricesRes = await axios.get(`/api/poolmarket/getMinMaxPrices`);
         const minmaxPrices = minmaxPricesRes.data;
         setAssetId(registeredConsumer.assetId);
         setLoad(registeredConsumer.load);

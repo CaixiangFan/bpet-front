@@ -55,12 +55,12 @@ const PPTable = () => {
   }, []);
 
   const getsmp = async () => {
-    const smpMinutesRes =  await axios.get(`${backendUrl}poolmarket/getSystemMarginalMinutes`);
+    const smpMinutesRes =  await axios.get(`/api/poolmarket/getSystemMarginalMinutes`);
     const smpMinutes = smpMinutesRes.data;
     const smps = [];
     for (let i=smpMinutes.length-1; i>=0; i--) {
       var timestamp = smpMinutes[i];
-      var marginalOfferRes = await axios.get(`${backendUrl}poolmarket/getMarginalOffer/${timestamp}`);
+      var marginalOfferRes = await axios.get(`/api/poolmarket/getMarginalOffer/${timestamp}`);
       var marginalOffer = marginalOfferRes.data;
       var price = marginalOffer.price;
       var volume = marginalOffer.amount;
@@ -109,7 +109,7 @@ const PPTable = () => {
         var dateHe = uniqueDateheRows[i][0].dateHe;
         var time = uniqueDateheRows[i][0].time;
         var timestamp = Math.floor(new Date(`${dateHe.split(' ')[0]} ${time}`).getTime() / 1000);
-        var totalDemandRes = await axios.get(`${backendUrl}poolmarket/getTotalDemand/${timestamp}`);
+        var totalDemandRes = await axios.get(`/api/poolmarket/getTotalDemand/${timestamp}`);
         var totalDemand = totalDemandRes.data;
   
         // Only one smp in the current hour

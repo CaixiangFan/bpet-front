@@ -41,12 +41,12 @@ const Register = () => {
   useEffect(() => {
     if (account.length === 0) return
     const checkRegistered = async () => {
-      const resIsRegisteredSupplier = await axios.get(`${backendUrl}registry/isregisteredsupplier/${account}`);
-      const resIsRegisteredConsumer = await axios.get(`${backendUrl}registry/isregisteredconsumer/${account}`);
+      const resIsRegisteredSupplier = await axios.get(`/api/registry/isregisteredsupplier/${account}`);
+      const resIsRegisteredConsumer = await axios.get(`/api/registry/isregisteredconsumer/${account}`);
       const _isRegisteredSupplier = resIsRegisteredSupplier.data;
       const _isRegisteredConsumer = resIsRegisteredConsumer.data;
       if (_isRegisteredSupplier) {
-        const resRegisteredSupplier = await axios.get(`${backendUrl}registry/getsupplier/${account}`);
+        const resRegisteredSupplier = await axios.get(`/api/registry/getsupplier/${account}`);
         const registeredSupplier = resRegisteredSupplier.data;
         setAssetId(registeredSupplier.assetId);
         setCapacityOrLoad(registeredSupplier.capacity);
@@ -54,7 +54,7 @@ const Register = () => {
         setBlockAmount(registeredSupplier.blockAmount);
         setOfferControl(registeredSupplier.offerControl);
       } else if (_isRegisteredConsumer) {
-        const resRegisteredConsumer = await axios.get(`${backendUrl}registry/getconsumer/${account}`);
+        const resRegisteredConsumer = await axios.get(`/api/registry/getconsumer/${account}`);
         const registeredConsumer = resRegisteredConsumer.data;
         setAssetId(registeredConsumer.assetId);
         setCapacityOrLoad(registeredConsumer.load);
@@ -75,7 +75,7 @@ const Register = () => {
     let allValid = true;
     if (registryData.userType.length === 0) {
       allValid = false;
-      enqueueSnackbar('You must select suer type', { variant: 'error' })
+      enqueueSnackbar('You must select uer type', { variant: 'error' })
     }
 
     if (registryData.assetID.length === 0) {

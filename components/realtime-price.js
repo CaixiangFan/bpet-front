@@ -17,8 +17,8 @@ const PoolPrice = () => {
     setTime(datetime.toLocaleTimeString("en-us", options));
     setHourEnding(datetime.getHours() + 1);
     try{
-      var _smpsResponse = await axios.get(`${backendUrl}poolmarket/getsmp`);
-      var priceResponse = await axios.get(`${backendUrl}poolmarket/getProjectedPoolPrice`);
+      var _smpsResponse = await axios.get(`/api/poolmarket/getsmp`);
+      var priceResponse = await axios.get(`/api/poolmarket/getProjectedPoolPrice`);
       console.log('smps: ', _smpsResponse.data);
       console.log('Current projected pool price', priceResponse.data);
       setProPrice(priceResponse.data);
@@ -29,17 +29,17 @@ const PoolPrice = () => {
   }
 
   const getOffers = async () => {
-    const offersResponse = await axios.get(`${backendUrl}poolmarket/getOffers`);
+    const offersResponse = await axios.get(`/api/poolmarket/getOffers`);
     console.log('All valid offers: ', offersResponse.data);
   }
 
   const getBids = async () => {
-    const bidsResponse = await axios.get(`${backendUrl}poolmarket/getBids`);
+    const bidsResponse = await axios.get(`/api/poolmarket/getBids`);
     console.log('All valid bids: ', bidsResponse.data);
   }
 
   const getDispatchedOffers = async () => {
-    const dispatchedOffersResponse = await axios.get(`${backendUrl}poolmarket/getDispatchedOffers`)
+    const dispatchedOffersResponse = await axios.get(`/api/poolmarket/getDispatchedOffers`)
     console.log('Dispatched offers: ', dispatchedOffersResponse.data);
   }
 

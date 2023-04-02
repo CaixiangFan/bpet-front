@@ -175,7 +175,7 @@ const Admin = () => {
   const handleCloseSnackbar = () => setSnackbar(null);
 
   const updateBalance = async () => {
-    const response = await axios.get(`${backendUrl}etk/balance/${account}`);
+    const response = await axios.get(`/api/etk/balance/${account}`);
     setETKBalance(response.data);
   }
   
@@ -272,16 +272,16 @@ const Admin = () => {
   }
 
   const querySuppliers = async () => {
-    const registeredSuppliersRes = await axios.get(`${backendUrl}registry/getAllSuppliers`);
+    const registeredSuppliersRes = await axios.get(`/api/registry/getAllSuppliers`);
     const registeredSuppliers = registeredSuppliersRes.data;
     let suppliers = [];
     for (let i=0; i<registeredSuppliers.length; i++) {
       if (!(/^0*$/.test(registeredSuppliers[i].split('x')[1]))) {
-        var supplierRes = await axios.get(`${backendUrl}registry/getsupplier/${registeredSuppliers[i]}`);
+        var supplierRes = await axios.get(`/api/registry/getsupplier/${registeredSuppliers[i]}`);
         var supplier = supplierRes.data;
         // const supplier = await registryContractWrite.getSupplier(registeredSuppliers[i]);
         // const _allowance = await tokenContractWrite.allowance(adminAddress, registeredSuppliers[i]);
-        var _allowanceRes = await axios.get(`${backendUrl}etk/allowance/${adminAddress}/${registeredSuppliers[i]}`);
+        var _allowanceRes = await axios.get(`/api/etk/allowance/${adminAddress}/${registeredSuppliers[i]}`);
         var _allowance = _allowanceRes.data;
         suppliers.push({
           id: i+1, 
@@ -298,13 +298,13 @@ const Admin = () => {
   }
 
   const queryConsumers = async () => {
-    const registeredConsumersRes = await axios.get(`${backendUrl}registry/getAllConsumers`);
+    const registeredConsumersRes = await axios.get(`/api/registry/getAllConsumers`);
     const registeredConsumers = registeredConsumersRes.data;
     // const registeredConsumers = await registryContractWrite.getAllConsumers();
     let consumers = [];
     for (let i=0; i<registeredConsumers.length; i++) {
       if (!(/^0*$/.test(registeredConsumers[i].split('x')[1]))) {
-        var consumerRes = await axios.get(`${backendUrl}registry/getconsumer/${registeredConsumers[i]}`);
+        var consumerRes = await axios.get(`/api/registry/getconsumer/${registeredConsumers[i]}`);
         var consumer = consumerRes.data;
         // var consumer = await registryContractWrite.getConsumer(registeredConsumers[i]);
         var _allowance = await tokenContractWrite.allowance(adminAddress, registeredConsumers[i]);
@@ -336,7 +336,6 @@ const Admin = () => {
 
   const handleClickSearch = (event) => {
     event.preventDefault();
-    console.log({usertype});
     getUsers(usertype);
   }
 
