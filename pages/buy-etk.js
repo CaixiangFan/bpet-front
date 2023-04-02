@@ -118,6 +118,7 @@ const BuyETK = () => {
         const resEtkBalance = await axios.get(`/api/etk/balance/${account}`);
         const _etkBalance = resEtkBalance.data;
         setETKBalance(_etkBalance);
+        setAllowance(allowance - amount);
       }
       buyToken(etkData.amount);
     }
