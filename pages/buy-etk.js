@@ -27,15 +27,7 @@ import {
   } from '@mui/material';
 import axios from 'axios';
 
-// export async function getServerSideProps() {
-//   const response = await axios.get(`/api/etk/balance/${account}`);
-//   const ssrBalance = response.data;
-//   return {
-//     props: {ssrBalance}, // will be passed to the page component as props
-//   }
-// }
-
-const BuyETK = ({ssrBalance}) => {
+const BuyETK = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
@@ -46,6 +38,7 @@ const BuyETK = ({ssrBalance}) => {
   const [actionType, setActionType] = useState('buyETK');
   const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
   const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
+  const [agreedCondition, setAgreedCondition] = useState(true);
 
   useEffect(() => {
     if (account.length === 0) return
@@ -173,6 +166,10 @@ const BuyETK = ({ssrBalance}) => {
     }
   }
 
+  const handleAgreedCondition = () => {
+    setAgreedCondition(!agreedCondition);
+  }
+
   return <Layout title='BuyETK'>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -255,7 +252,7 @@ const BuyETK = ({ssrBalance}) => {
 
               <Grid item xs={12}>
                 <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  control={<Checkbox value="agreeCondition" color="success" onChange={handleAgreedCondition} />}
                   label="I have read and understand the terms and conditions of the agreement to buy ETK."
                 />
               </Grid>
@@ -265,7 +262,7 @@ const BuyETK = ({ssrBalance}) => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={!isRegisteredSupplier && !isRegisteredConsumer}
+              disabled={(!isRegisteredSupplier && !isRegisteredConsumer) || agreedCondition}
             >
               Submit
             </Button>

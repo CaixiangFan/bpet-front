@@ -32,6 +32,7 @@ const SubmitOffer = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [isRegisteredSupplier, setIsRegisteredSupplier] = useState(false);
+  const [agreedCondition, setAgreedCondition] = useState(true);
 
   useEffect(() => {
     if (account.length === 0) return
@@ -130,6 +131,10 @@ const SubmitOffer = () => {
     }
   };
 
+  const handleAgreedCondition = () => {
+    setAgreedCondition(!agreedCondition);
+  }
+
   return <Layout title='SubmitOffer'>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -195,7 +200,7 @@ const SubmitOffer = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  control={<Checkbox value="agreeCondition" color="primary" onChange={handleAgreedCondition}/>}
                   label="I have read and understand the terms and conditions of the agreement to submit an offer."
                 />
               </Grid>
@@ -205,7 +210,7 @@ const SubmitOffer = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={!isRegisteredSupplier}
+              disabled={(!isRegisteredSupplier) || agreedCondition}
             >
               Submit
             </Button>

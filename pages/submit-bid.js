@@ -32,6 +32,7 @@ const SubmitBid = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [isRegisteredConsumer, setIsRegisteredConsumer] = useState(false);
+  const [agreedCondition, setAgreedCondition] = useState(true);
 
   useEffect(() => {
     if (account.length === 0) return
@@ -116,6 +117,10 @@ const SubmitBid = () => {
     }
   }
 
+  const handleAgreedCondition = () => {
+    setAgreedCondition(!agreedCondition);
+  }
+
   return <Layout title='SubmitBid'>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -169,7 +174,7 @@ const SubmitBid = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  control={<Checkbox value="agreeCondition" color="primary" onChange={handleAgreedCondition}/>}
                   label="I have read and understand the terms and conditions of the agreement to submit a bid."
                 />
               </Grid>
@@ -179,7 +184,7 @@ const SubmitBid = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={!isRegisteredConsumer}
+              disabled={(!isRegisteredConsumer) || agreedCondition}
             >
               Submit
             </Button>
