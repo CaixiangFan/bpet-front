@@ -19,7 +19,6 @@ import {
     Box
   } from '@mui/material';
 import axios from "axios";
-import { waitUntilSymbol } from 'next/dist/server/web/spec-compliant/fetch-event';
 
 const SubmitOffer = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -35,11 +34,11 @@ const SubmitOffer = () => {
   const [agreedCondition, setAgreedCondition] = useState(true);
 
   useEffect(() => {
+    console.log('signer: ', signer.getAddress());
     if (account.length === 0) return
     const checkRegistered = async () => {
       const _isRegisteredSupplierRes = await axios.get(`/api/registry/isregisteredsupplier/${account}`);
       const _isRegisteredSupplier = _isRegisteredSupplierRes.data;
-      console.log('registered supplier: ', _isRegisteredSupplier);
       if (_isRegisteredSupplier) {
         const registeredSupplierRes = await axios.get(`/api/registry/getsupplier/${account}`);
         const registeredSupplier = registeredSupplierRes.data;

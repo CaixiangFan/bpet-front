@@ -19,8 +19,8 @@ import { Store } from "utils/Store";
 import { defaultNetworkId, backendUrl, besuChainConfig } from 'utils/utils';
 import axios from 'axios';
 
-const pages = ['I\'m Admin', 'Register', 'Buy ETK', 'Submit Offer', 'Submit Bid'];
-const pages_link = ['/admin', '/register', '/buy-etk', '/submit-offer', '/submit-bid'];
+const pages = ['I\'m Admin', 'Register', 'Buy ETK', 'Submit Offer', 'Submit Bid', 'Pay'];
+const pages_link = ['/admin', '/register', '/buy-etk', '/submit-offer', '/submit-bid', '/pay'];
 
 const ResponsiveAppBar = () => {
   const { state, dispatch } = useContext(Store);
