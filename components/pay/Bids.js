@@ -8,9 +8,31 @@ import React, { useState, useEffect } from "react";
 // } from 'wagmi';
 import {
   MdElectricCar,
+  MdLocalOffer,
   MdAttachMoney,
   MdOutlineElectricBolt,
+  MdAvTimer,
+  MdAccountCircle
 } from "react-icons/md";
+import {
+  Avatar,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  TextField,
+  CssBaseline,
+  Container,
+  Typography,
+  Checkbox,
+  Grid,
+  Stack,
+  Box,
+  styled,
+  Paper
+} from '@mui/material';
 // import { toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
@@ -165,83 +187,100 @@ function Bids(props) {
   //   }
   // }
 
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    // color: theme.palette.text.secondary,
+  }));
+
   return (
     <div>
       {!isopen && (
-        <div
+        <Grid
+          container
           onClick={() => setIsopen(!isopen)}
-          className="p-2 flex justify-between bg-[#0f1421] rounded-[10px] border-[1px] border-[#26365A] text-[15px] md:text-[18px] font-kanit hover:cursor-pointer mt-3"
+          sx = {{display: 'flex', flexDirection: 'row'}}
         >
-          <div className="flex">
-            <MdElectricCar className="mt-[4px] text-[24px] mr-1 md:mr-2 text-blue-500" />
-            <p className="mr-1 md:mr-2 ">Amount : ~{props.amount} MWH</p>
-          </div>
-          <div className="flex">
-            <p className="mr-1 md:mr-2">${props.price} / MWH</p>
-            <BsChevronDown className="text-blue-500 text-[24px] mt-[3px]" />
-          </div>
-        </div>
+          <Grid item sx = {{display: 'flex', flexDirection: 'row'}}>
+            <Item sx = {{display: 'flex', flexDirection: 'row', width: 400}}>
+            <p>
+              <MdOutlineElectricBolt style ={{color: 'blue', fontSize: 18 }} />
+              Amount : ~{props.amount} MWh
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ${props.price.toFixed(2)} / MWh
+              <BsChevronDown style ={{color: 'blue', fontSize: 20 }} />
+            </p>
+            </Item>
+          </Grid>
+        </Grid>
       )}
       {isopen && (
-        <div className="p-2 justify-between bg-[#0f1421] rounded-[10px] border-[1px] border-[#26365A] text-[15px] md:text-[18px] font-kanit hover:cursor-pointer mt-3">
-          <div>
-            <div
-              className="flex justify-between "
-              onClick={() => setIsopen(!isopen)}
+        <Grid container 
+        direction="column"
+        justifyContent="center"
+        alignItems="stretch"
+        >
+          <Grid item>
+            <Paper
+              sx={{
+                p: 1,
+                width: 1,
+                backgroundColor: (theme) =>
+                  theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+              }}
             >
-              <div className="flex">
-                <MdElectricCar className="mt-[4px] mr-1 md:mr-2 text-blue-500  text-[24px]" />
-                <p className="text-[18px] flex mt-[2px]">
-                  <p className="font-bold mr-2 underline">Offer:</p> {props.amount}
-                </p>
-              </div>
-              <BsChevronUp className="text-blue-500 mt-[1px]  text-[24px]" />
-            </div>
-          </div>
-          <div className="flex mt-2">
-            <MdAttachMoney className="mt-[4px] mr-1 md:mr-2 text-blue-500  text-[24px]" />
-            <p className="text-[18px] flex mt-[2px]">
-              <p className="font-bold mr-2 underline">Price Rate:</p> $
-              {props.price} per KWH
-            </p>
-          </div>
-          <div className="flex mt-2">
-            <MdOutlineElectricBolt className="mt-[4px] mr-1 md:mr-2 text-blue-500  text-[24px]" />
-            <p className="text-[18px] flex mt-[2px]">
-              <p className="font-bold mr-2 underline">Amount:</p>
-              {props.amount} KWH
-            </p>
-          </div>
-          <div className="flex mt-2">
-            <BiCurrentLocation className="mt-[4px] mr-1 md:mr-2 text-blue-500  text-[24px]" />
-            <p className="text-[18px] flex mt-[2px]">
-              <p className="font-bold mr-2 underline">Location:</p>{" "}
-            </p>
-          </div>
-          <p className="mt-2 ml-2 truncate">{props.account}</p>
-          <div className="flex justify-between px-1 mt-4">
-            <div className="flex mt-2">
-              <p className="text-xl font-bold flex ">Total Paid:</p>
-              <p className="text-xl font-bold text-blue-500 ml-2 ">
-                {totalCalc(props.price, props.amount)} USD
+              <p onClick={() => setIsopen(!isopen)}>
+                <MdLocalOffer style ={{color: 'blue', fontSize: 18 }}  />
+                <u>BidID :</u>{` ${props.account.substr(0, 8)}...${props.account.substr(-8)}-${props.id}`}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <BsChevronUp style={{color: 'blue', fontSize: 20}} />
               </p>
-            </div>
-          </div>
-          <div className="flex justify-between mt-6 mx-2">
-            <div 
-              onClick={handleCancelOffer}
-              className="p-2  bg-red-600 text-white  rounded-[10px] mb-1">
-              Cancel Offer
-            </div>
-            <div 
-              // disable={!writeConfirm}
-              // onClick={() => writeConfirm?.()}
-              onClick={()=>{console.log("Comolete!")}}
-              className="p-2  bg-[#26365A] text-blue-400 hover:text-[#5285F6] rounded-[10px] mb-1">
-              Mark as completed
-            </div>
-          </div>
-        </div>
+
+              <p> 
+                <MdAttachMoney style ={{color: 'blue', fontSize: 18 }}  />
+
+                <u>Price Rate :</u>
+                {` \$${props.price} per MWh`} 
+              </p>
+
+              <p>
+                <MdOutlineElectricBolt style ={{color: 'blue', fontSize: 18 }}  />
+                <u>Max Amount :</u> 
+                  {` ${props.amount} MWh`}
+              </p>
+
+              <p>
+                <MdAvTimer style ={{color: 'blue', fontSize: 18 }}  />
+                <u>SubmitAt :</u>  {new Date(props.submitAt * 1000).toLocaleString()}
+              </p>
+
+              <p>
+                <MdAccountCircle style ={{color: 'blue', fontSize: 18 }}  />
+                  <u>Account :</u> {`${props.account.substr(0, 8)}...${props.account.substr(-8)}`}
+              </p>
+
+              <p className="text-xl font-bold flex ">
+                <u>MaxTotalPay :</u> {` ${totalCalc(props.price, props.amount).toFixed(2)} USD`} 
+                <Box 
+                  m={1}
+                  //margin
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
+                >
+                  <Button 
+                    variant="contained"
+                    onClick={() => {console.log("Pay this bid!")}}
+                  >
+                    Pay
+                  </Button>
+                </Box>
+              </p>
+            </Paper>
+          </Grid>
+        </Grid>
       )}
     </div>
   );

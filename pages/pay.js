@@ -3,10 +3,8 @@ import Layout from 'components/layout';
 import { ethers } from "ethers";
 import Offers from "../components/pay/Offers";
 import Bids from "../components/pay/Bids";
-import { BsInfoCircleFill } from "react-icons/bs";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import PaymentIcon from '@mui/icons-material/Payment';
 import {
-  backendUrl,
   TOKEN_CONTRACT_ADDRESS
 } from 'utils/utils';
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json'
@@ -15,18 +13,11 @@ import { Store } from "utils/Store";
 import {
     Avatar,
     Button,
-    Select,
-    MenuItem,
-    FormControl,
-    FormControlLabel,
-    InputLabel,
-    TextField,
     CssBaseline,
     Container,
     Typography,
-    Checkbox,
-    Grid,
-    Box
+    Stack,
+    Box,
   } from '@mui/material';
 import axios from 'axios';
 
@@ -44,8 +35,8 @@ const Pay = () => {
   const [agreedCondition, setAgreedCondition] = useState(true);
 
   const [page, setPage] = useState("bids");
-  const [offers, setOffers] = useState("");
-  const [bids, setBids] = useState("");
+  const [offers, setOffers] = useState([]);
+  const [bids, setBids] = useState([]);
 
   useEffect(() => {
     if (account.length === 0) return
@@ -207,90 +198,73 @@ const Pay = () => {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <MonetizationOnIcon />
+            <PaymentIcon />
           </Avatar>
+          
           <Typography component="h1" variant="h5">
-            Pay/Charge (ETK)
+            Transactions History
           </Typography>
-              <div>
-                <div className=" mt-[1rem] 2xl:mt-[6rem] w-[550px] font-epilogue bg-[#0D111C] border-[1px] border-[#1b2133] p-4 rounded-[15px]">
-                  <div className="flex flex-row justify-between">
-                    <div className="text-3xl">TX History</div>
-                    <div className="hover:cursor-pointer">
-                      <BsInfoCircleFill />
-                    </div>
-                  </div>
-                  <div className="flex justify-between flex-row mt-8">
-                    <div
+          
+          <Box component="span" sx={{ width: 450, p: 2, display: 'flex'}}>
+            <div className=" mt-[1rem] 2xl:mt-[6rem] w-[550px] font-epilogue bg-[#0D111C] border-[1px] border-[#1b2133] p-4 rounded-[15px]">
+              <Stack spacing={0} direction="row">
+                    <Button
+                      variant={page == "bids" ? "outlined" : "text"}
+                      style={{maxWidth: '200px', maxHeight: '50px', minWidth: '200px', minHeight: '50px'}}
                       onClick={() => setPage("bids")}
-                      className={`w-[50%]  flex text-[17px] md:text-xl p-2 md:p-4 hover:cursor-pointer ${
-                        page == "bids"
-                          ? "border-[1px] border-[#5285F6] rounded-md"
-                          : "text-gray-400"
-                      } `}
+                      sx={{textTransform: 'none'}}
                     >
-                      Bids
-                      <p className="ml-3 text-[#5285F6] font-bold text-[17px]">
-                        {bids.length > 0 ? bids.length : <p>0</p>}
-                      </p>
-                    </div>
-                    <div
-                      onClick={() => setPage("offers")}
-                      className={`w-[50%]  flex text-[17px] md:text-xl p-2 md:p-4 hover:cursor-pointer ${
-                        page == "offers"
-                          ? "border-[1px] border-[#5285F6] rounded-md"
-                          : "text-gray-400"
-                      }  `}
-                    >
-                      Offers
-                      <p className="ml-3 text-[#5285F6] font-bold text-[17px]">
-                        {offers.length > 0 ? offers.length : <p>0</p>}
-                      </p>
-                    </div>
-                  </div>
-                  {offers == "" && page == "bids" && (
-                    <div className="p-2 px-4 flex justify-center bg-[#0f1421] mt-6 py-8 rounded-[10px] border-[1px] border-[#26365A]">
-                      <p className="text-sm md:text-lg">You have no pending offers.</p>
-                    </div>
-                  )}
-
-                  {bids &&
-                    page == "bids" &&
-                    bids.map((bid, index) => (
-                      <Bids
-                        key={index}
-                        // id={bid.data.id}
-                        amount={bid.amount}
-                        price={bid.price}
-                        submitAt={bid.submitAt}
-                        account={bid.consumerAccount}
-                      />
-                    ))}
+                      <b>{`Submitted Bids ${bids.length > 0 ? bids.length : 0}`}</b>
+                    </Button>
                     
-                  {offers &&
-                    page == "offers" &&
-                    offers.map((offer, index) => (
-                      <Offers
-                        key={index}
-                        // id={offer.data.id}
-                        amount={offer.amount}
-                        price={offer.price}
-                        submitAt={offer.submitMinute}
-                        account={offer.supplierAccount}
-                      />
-                    ))}
-
-
-                  {offers == "" && page == "offers" && (
-                    <div className="p-2 px-4 flex justify-center bg-[#0f1421] mt-6 py-8 rounded-[10px] border-[1px] border-[#26365A]">
-                      <p className="text-sm md:text-lg">
-                        You haven't created any offers yet.
-                      </p>
-                    </div>
-                  )}
+                    <Button
+                      style={{maxWidth: '200px', maxHeight: '50px', minWidth: '200px', minHeight: '50px'}}
+                      variant={page == "offers" ? "outlined" : "text"}
+                      onClick={() => setPage("offers")}
+                      sx={{textTransform: 'none'}}
+                    >
+                      <b>{`Valid Offers ${offers.length > 0 ? offers.length : 0}`}</b>
+                    </Button>
+              </Stack>
+              {offers == "" && page == "offers" && (
+                <div className="p-2 px-4 flex justify-center bg-[#0f1421] mt-6 py-8 rounded-[10px] border-[1px] border-[#26365A]">
+                  <p className="text-sm md:text-lg">There are no offers in the market.</p>
                 </div>
-              </div>
-            </Box>
+              )}
+              {bids == "" && page == "bids" && (
+                <div className="p-2 px-4 flex justify-center bg-[#0f1421] mt-6 py-8 rounded-[10px] border-[1px] border-[#26365A]">
+                  <p className="text-sm md:text-lg">You have not submitted any bids in the current hour.</p>
+                </div>
+              )}
+
+              {bids &&
+                page == "bids" &&
+                bids.map((bid, index) => (
+                  <Bids
+                    key={index}
+                    id={index}
+                    amount={bid.amount}
+                    price={bid.price}
+                    submitAt={bid.submitMinute}
+                    account={bid.consumerAccount}
+                  />
+              ))}
+                
+              {offers &&
+                page == "offers" &&
+                offers.map((offer, index) => (
+                  <Offers
+                    key={index}
+                    id={offer.id}
+                    amount={offer.amount}
+                    price={offer.price}
+                    submitAt={offer.submitMinute}
+                    account={offer.supplierAccount}
+                  />
+              ))}
+            </div>
+          </Box>
+        </Box>
       </Container>
   </Layout>
 }
