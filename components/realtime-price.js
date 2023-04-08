@@ -35,7 +35,7 @@ const PoolPrice = () => {
 
   const getBids = async () => {
     const bidsResponse = await axios.get(`/api/poolmarket/getBids`);
-    console.log('All valid bids: ', bidsResponse.data);
+    console.log('All current bids: ', bidsResponse.data);
   }
 
   const getDispatchedOffers = async () => {

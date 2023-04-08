@@ -7,6 +7,8 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import {
   TOKEN_CONTRACT_ADDRESS
 } from 'utils/utils';
+import { POOLMARKET_CONTRACT_ADDRESS, backendUrl } from 'utils/utils';
+import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json'
 import tokenAbi from 'utils/contracts/EnergyToken.sol/EnergyToken.json'
 import { useSnackbar, closeSnackbar } from 'notistack';
 import { Store } from "utils/Store";
@@ -25,6 +27,7 @@ const Pay = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { state, dispatch } = useContext(Store);
   const { walletConencted, correctNetworkConnected, account, provider, signer } = state;
+  const poolmarketContract = new ethers.Contract(POOLMARKET_CONTRACT_ADDRESS, poolmarketAbi.abi, signer);
   const [usertype, setUsertype] = useState('');
   const [assetId, setAssetId] = useState('');
   const [etkBalance, setETKBalance] = useState(0);
@@ -75,8 +78,10 @@ const Pay = () => {
 
     checkRegistered();
     const getBids = async () => {
-      const bidsResponse = await axios.get(`/api/poolmarket/getBids`);
-      console.log('Bids: ', bidsResponse.data);
+      const bidHours = await poolmarketContract.getBidHours();
+      console.log({bidHours});
+      const bidsResponse = await axios.get(`/api/poolmarket/getMyBids/${account}/${bidHours}`);
+      console.log('My Bids: ', bidsResponse.data);
       if (bidsResponse.data.length > 0) setBids(bidsResponse.data);
     }
     getBids();

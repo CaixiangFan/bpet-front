@@ -17,21 +17,12 @@ import {
 import {
   Avatar,
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  TextField,
-  CssBaseline,
-  Container,
-  Typography,
-  Checkbox,
   Grid,
   Stack,
   Box,
   styled,
-  Paper
+  Paper,
+  Typography
 } from '@mui/material';
 // import { toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
@@ -205,13 +196,18 @@ function Bids(props) {
         >
           <Grid item sx = {{display: 'flex', flexDirection: 'row'}}>
             <Item sx = {{display: 'flex', flexDirection: 'row', width: 400}}>
-            <p>
-              <MdOutlineElectricBolt style ={{color: 'blue', fontSize: 18 }} />
-              Amount : ~{props.amount} MWh
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              ${props.price.toFixed(2)} / MWh
-              <BsChevronDown style ={{color: 'blue', fontSize: 20 }} />
-            </p>
+              <Grid container sx={{width: 1/2}}>
+                <Typography align="right">
+                  <MdOutlineElectricBolt style ={{color: 'blue', fontSize: 18 }} />
+                  Amount : ~{props.amount} MWh
+                </Typography>
+              </Grid>
+              <Grid>
+                <Typography align="right">
+                  ${props.price.toFixed(2)} / MWh
+                  <BsChevronDown style ={{color: 'blue', fontSize: 20 }} />
+                </Typography>
+              </Grid>
             </Item>
           </Grid>
         </Grid>

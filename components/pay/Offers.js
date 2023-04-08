@@ -150,19 +150,24 @@ function Offer(props) {
       {!isopen && (
         <Grid
           container
-          rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          sx = {{display: 'flex', flexDirection: 'row'}}
           onClick={() => setIsopen(!isopen)}
         >
-          <Grid item sx = {{display: 'flex', flexDirection: 'row'}}>
-            <Item sx = {{display: 'flex', flexDirection: 'row', width: 400}}>
-              <p className="mr-1 md:mr-2 ">
-                <MdOutlineElectricBolt style ={{color: 'blue', fontSize: 18 }} />
-                Amount : ~{props.amount} MWh 
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                {` ${props.price.toFixed(2)} / MWh`}
-                <BsChevronDown style ={{color: 'blue', fontSize: 20 }} />
-              </p>
+          <Grid item sx = {{display: 'flex', flexDirection: 'row'}} xs = {12}>
+            <Item sx = {{display: 'flex', flexDirection: 'row',  width: 400}}>
+              <Grid container sx={{width: 1/2}}>
+
+                <Typography inline variant="body1" align="left">
+                  <MdOutlineElectricBolt style ={{color: 'blue', fontSize: 18 }} />
+                  Amount : ~{props.amount} MWh 
+                </Typography>
+              </Grid>
+              <Grid container sx={{width: 1/2}}>
+
+                <Typography inline variant="body1" align="right">
+                  {` ${props.price.toFixed(2)} / MWh`}
+                  <BsChevronDown style ={{color: 'blue', fontSize: 20 }} />
+                </Typography>
+              </Grid>
             </Item>
           </Grid>
         </Grid>
