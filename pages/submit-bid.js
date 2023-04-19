@@ -106,7 +106,7 @@ const SubmitBid = () => {
     try {
       const tx = await poolmarketContractWrite.submitBid(
         Number(data.energyAmount),
-        Number(+(data.price * 100))
+        Math.round(data.price * 100)
       );
       const receipt = await tx.wait(1);
       if (receipt.status == 1) {
