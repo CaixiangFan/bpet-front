@@ -196,7 +196,7 @@ function Offer(props) {
               <p>
                 <MdAttachMoney style ={{color: 'blue', fontSize: 18 }} />
                 <u>Price Rate :</u> 
-                  {` \$ ${props.price} per MWh`} 
+                  {` \$ ${props.price.toFixed(2)} per MWh`} 
               </p>
 
               <p>

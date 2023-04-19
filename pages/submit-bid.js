@@ -46,8 +46,8 @@ const SubmitBid = () => {
         const minmaxPrices = minmaxPricesRes.data;
         setAssetId(registeredConsumer.assetId);
         setLoad(registeredConsumer.load);
-        setMinPrice(minmaxPrices.min);
-        setMaxPrice(minmaxPrices.max);
+        setMinPrice((minmaxPrices.min).toFixed(2));
+        setMaxPrice((minmaxPrices.max / 100).toFixed(2));
       } else {
         enqueueSnackbar('This account has not been registered as consumer!', { variant: 'info', preventDuplicate: true});
       }
@@ -106,7 +106,7 @@ const SubmitBid = () => {
     try {
       const tx = await poolmarketContractWrite.submitBid(
         Number(data.energyAmount),
-        Number(data.price)
+        Number(+(data.price * 100))
       );
       const receipt = await tx.wait(1);
       if (receipt.status == 1) {

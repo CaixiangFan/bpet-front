@@ -249,7 +249,7 @@ const Pay = () => {
                     key={index}
                     id={index}
                     amount={bid.amount}
-                    price={bid.price}
+                    price={bid.price/100}
                     submitAt={bid.submitMinute}
                     account={bid.consumerAccount}
                   />
@@ -262,7 +262,7 @@ const Pay = () => {
                     key={index}
                     id={offer.id}
                     amount={offer.amount}
-                    price={offer.price}
+                    price={offer.price/100}
                     submitAt={offer.submitMinute}
                     account={offer.supplierAccount}
                   />

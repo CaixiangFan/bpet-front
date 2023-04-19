@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Layout from 'components/layout';
-import { ethers } from "ethers";
+import { ethers, BigNumber } from "ethers";
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import { POOLMARKET_CONTRACT_ADDRESS, backendUrl } from 'utils/utils';
 import poolmarketAbi from 'utils/contracts/PoolMarket.sol/PoolMarket.json'
@@ -47,8 +47,8 @@ const SubmitOffer = () => {
         setAssetId(registeredSupplier.assetId);
         setBlockAmount(registeredSupplier.blockAmount);
         setCapacity(registeredSupplier.capacity);
-        setMinPrice(minmaxPrices.min);
-        setMaxPrice(minmaxPrices.max);
+        setMinPrice((minmaxPrices.min).toFixed(2));
+        setMaxPrice((minmaxPrices.max / 100).toFixed(2));
       } else {
         enqueueSnackbar('This account has not been registered as supplier!', { variant: 'info', preventDuplicate: true});
       }
@@ -119,7 +119,7 @@ const SubmitOffer = () => {
       const tx = await poolmarketContractWrite.submitOffer(
         Number(data.blockNumber),
         Number(data.energyAmount),
-        Number(data.price)
+        Number(+(data.price * 100))
       );
       const receipt = await tx.wait(1);
       if (receipt.status == 1) {
