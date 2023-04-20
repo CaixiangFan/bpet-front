@@ -62,7 +62,7 @@ const SMPTable = () => {
       var timestamp = totalDemandMinutes[i];
       var marginalOfferRes = await axios.get(`/api/poolmarket/getMarginalOffer/${timestamp}`);
       var marginalOffer = marginalOfferRes.data;
-      var price = marginalOffer.price;
+      var price = (marginalOffer.price / 100).toFixed(2);
       var volume = marginalOffer.amount;
       var dateObj = new Date(timestamp * 1000);
       var he = dateObj.toLocaleDateString("en-us");

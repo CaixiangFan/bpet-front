@@ -114,7 +114,7 @@ const PPTable = () => {
   
         // Only one smp in the current hour
         if (uniqueDateheRows[i].length === 1) {
-          price = Number(uniqueDateheRows[i][0].price);
+          price = (+uniqueDateheRows[i][0].price / 100).toFixed(2);
           poolprices.push(createData(
             dateHe, 
             price,
@@ -140,7 +140,7 @@ const PPTable = () => {
           cumulativePrice += smprice * duration;
         }
         
-        price = Math.round((cumulativePrice / 60) * 100) / 100;
+        price = ((cumulativePrice / 60) / 100).toFixed(2);
         poolprices.push(createData(
                       dateHe, 
                       price,
